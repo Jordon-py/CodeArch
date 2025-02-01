@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to CodeArch</title>
+  <style>
+    /* GLOBAL RESET */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background-color: #ffffff;
+      color: #333;
+    }
+
+    /* CONTAINER */
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      height: 100%;
+      padding: 2rem;
+    }
+
+    /* HEADER */
+    h1 {
+      font-size: 2rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+      /* Subtle gold gradient text */
+      background: linear-gradient(
+        to right, 
+        #FFD700 0%, 
+        #FFF9D0 40%, 
+        #FFD700 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    h1 em {
+      font-style: normal; /* remove default italic style so gradient looks sharper */
+      font-weight: 600;
+    }
+
+    /* USERNAME */
+    .username {
+      font-size: 1.2rem;
+      color: #777;
+      margin-bottom: 1.5rem;
+    }
+
+    /* PARAGRAPH */
+    p {
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    /* BUTTON */
+    .login-btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+      cursor: pointer;
+      /* Glossy gold gradient */
+      background: linear-gradient(
+        135deg, 
+        #FFD700 0%, 
+        #FFF9D0 40%, 
+        #FFD700 100%
+      );
+      box-shadow: 0 2px 6px rgba(255, 215, 0, 0.4);
+      transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+    }
+    .login-btn:hover {
+      background: linear-gradient(
+        135deg, 
+        #c9a100 0%, 
+        #FFF4B0 40%, 
+        #c9a100 100%
+      );
+      color: #fff;
+      box-shadow: 0 4px 8px rgba(255, 215, 0, 0.6);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><em>Welcome to CodeArch</em></h1>
+    <h3 class="username"><%= userName %></h3>
+    <p>Store and manage your code snippets efficiently. 
+       Keep your projects streamlined and accessible, all in one place.</p>
+    <a href="/login" class="login-btn">Login</a>
+  </div>
+</body>
+</html>

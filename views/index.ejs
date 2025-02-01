@@ -1,23 +1,32 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home Page</title>
-</head>
-<body>
-  <% if (user) { %>
-    <h1>Welcome to the app, <%= user.username %>!</h1>
-    <p>
-      <a href="/auth/sign-out">Sign out</a>
-    </p>
-  <% } else { %>
-    <h1>Welcome to the app, guest.</h1>
-    <p>
-      <a href="/auth/sign-up">Sign up</a> or
-      <a href="/auth/sign-in">Sign in</a>.
-    </p>
-  <% } %>
-  <p><a href="/vip-lounge">Get into the VIP Users Only lounge!</a></p>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css" />
+    <title>Welcome to CodeArch!</title>
+  </head>
+  <body>
+    <div class="container">
+      <% if (user) { %>
+        <div class="header"></div>
+          <h1 class="welcome">Welcome to <em>CodeArch</em>, <%= user.username %>!</h1>
+          <nav class="nav-links">
+            <a href="/auth/sign-out" class="btn">Sign out</a>
+          </nav>
+        </div>
+      <% } else { %>
+        <div class="header"></div>
+          <h1 class="welcome">Welcome To <em>CodeArch</em></h1>
+          <nav class="nav-links">
+            <a href="/auth/sign-up" class="btn">Sign Up</a>
+            <a href="/auth/sign-in" class="btn">Sign In</a>
+          </nav>
+        </div>
+      <% } %>
+      <div class="content">
+        <a href="/vip-lounge" class="vip-link">Get into the VIP Users Only lounge!</a>
+      </div>
+    </div>
+  </body>
 </html>

@@ -1,0 +1,98 @@
+/* GLOBAL RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    height: 100%;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    /* Elegant black-to-gold gradient background */
+    background: linear-gradient(135deg, #000000 60%, #D4AF37);
+    /* Using white text for better contrast on a dark background */
+    color: #fff;
+  }
+  
+  /* Center the page content */
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  /* HEADER STYLES */
+  h1.welcome {
+    font-size: 2rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    /* Subtle gold gradient text for a refined look */
+    background: linear-gradient(
+      to right, 
+      #D4AF37 0%, 
+      #FFF9D0 40%, 
+      #D4AF37 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  h1.welcome em {
+    font-style: italic; /* Remove default italic style for a sharper gradient */
+    font-weight: 600;
+  }
+  
+  /* PARAGRAPH STYLES */
+  p {
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+    /* A slightly muted white for paragraph text */
+    color: #eee;
+  }
+  
+  /* LINK STYLES */
+  a {
+    color: #D4AF37;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+  
+  a:hover {
+    color: #fff;
+  }
+  
+  /* OPTIONAL: Button-like styling for links 
+     If you want any link to have a “button” appearance, add the class "button" to the <a> element */
+  a.button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    background: linear-gradient(
+      135deg, 
+      #D4AF37 0%, 
+      #FFF9D0 40%, 
+      #D4AF37 100%
+    );
+    box-shadow: 0 2px 6px rgba(212, 175, 55, 0.4);
+    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+  }
+  
+  a.button:hover {
+    background: linear-gradient(
+      135deg, 
+      #b48830 0%, 
+      #FFF4B0 40%, 
+      #b48830 100%
+    );
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(212, 175, 55, 0.6);
+    transform: translateY(-1px);
+  }
+  

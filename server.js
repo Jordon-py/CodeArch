@@ -60,6 +60,11 @@ app.get('/vip-lounge', (req, res) => {
   }
 });
 
+app.post('/snippets', (req, res) => {
+  res.render('dashboard');
+});
+
+
 // Use the auth controller for all auth-related routes
 app.use('/auth', authController);
 

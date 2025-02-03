@@ -1,17 +1,24 @@
-const mongoose = require('mongoose')
+// models/snippets.js
+const mongoose = require('mongoose');
 
-const snippetSchema = mongoose.Schema({
-    title: {
-        type: String,
-        required: true,
-    },
-    code: {
-        type: String || Int16Array,
-        required: true,
-    },
-})
+const snippetSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  language: {
+    type: String,
+    required: true,
+  },
+  code: {
+    type: String,
+    required: true,
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false  // Set to true if all snippets must belong to a user
+  }
+}, { timestamps: true });
 
-
-const snippet = mongoose.model('userSnippet', snippetSchema);
-model.exports = snippet;
-model.exports = snippetSchema
+module.exports = mongoose.model('Snippet', snippetSchema);

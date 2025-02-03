@@ -1,15 +1,17 @@
 /* Import Montserrat from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
 
-/* CSS Variables for Color Scheme */
+/* CSS Variables for Color Scheme & Spacing */
 :root {
   --gold: #D4AF37;
   --silver: #C0C0C0;
   --black: #000000;
   --white: #ffffff;
-  /* Updated gradient colors: from black to silver */
-  --gradient-start: var(--black);
-  --gradient-end: var(--silver);
+  --gradient-start: #000000;   /* deep black */
+  --gradient-middle: #434343;  /* dark gray */
+  --gradient-end: #C0C0C0;      /* silver */
+  --base-spacing: 1rem;
+  --container-padding: 2rem;
 }
 
 /* Global Reset & Base Styles */
@@ -19,17 +21,42 @@
   box-sizing: border-box;
 }
 
-/* Apply the linear gradient background from black to silver on the entire page */
-html, body {
-  height: 100%;
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
-  color: #333;
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* --------------------------
-   Global Utility Classes
---------------------------- */
+/* Use one background rule with a subtle animated gradient */
+html, body {
+  height: 100%;
+  background: linear-gradient(270deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
+  background-size: 600% 600%;
+  animation: gradientShift 20s ease-in-out; /* Extended duration for subtle movement */
+  color: #333;
+  line-height: 1.6;
+  letter-spacing: 0.5px;
+}
+
+/* Keyframes for a smooth background gradient shift */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Typography */
+h1, .hero h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: calc(var(--base-spacing) * 1.5);
+  letter-spacing: 1px;
+}
+p, .tagline, .snippet-form input, .snippet-form select, .snippet-form textarea {
+  font-size: 1rem;
+}
 
 /* Shimmering Text Animation */
 @keyframes textShine {
@@ -49,25 +76,25 @@ html, body {
 /* Button Base & 3D Floating Effect */
 .btn {
   display: inline-block;
-  padding: 0.65rem 1.5rem;
+  padding: 0.15rem 1.5rem;
   border-radius: 12px;
   font-weight: 600;
   text-decoration: none;
-  transition: transform 0.8s ease, box-shadow 0.8s ease;
+  transition: transform 2.4s ease, box-shadow 1.4s ease;
 }
-.btn:hover {
+.btn:hover, .btn:focus {
   transform: translateY(-3px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  outline: none;
 }
 
 /* Primary & Secondary Button Variants */
 .primary-btn {
-  background: linear-gradient(135deg, var(--gold) 0%, #fff9d0 40%, var(--gold) 100%);
+  background: linear-gradient(135deg, silver 0%,rgb(255, 255, 255) 40%, silver 100%);
   color: var(--black);
 }
 .primary-btn:hover {
-  /* Fallback hover effect using a slight brightness reduction */
-  filter: brightness(0.9);
+  filter: brightness(1.1);
 }
 .secondary-btn {
   background: linear-gradient(135deg, var(--silver), #eeeeee, var(--silver));
@@ -78,15 +105,18 @@ html, body {
    Navigation Styles
 --------------------------- */
 .site-header {
+  height: 1rem;
   width: 100%;
   position: sticky;
   top: 0;
   z-index: 10;
+  container-type: normal 1rem;
 }
 .navbar {
-  background: linear-gradient(to right, var(--white) 5%, var(--gradient-end) 90%);
+  background: rgba(232, 232, 232, 0.8); /* Semi-transparent background */
+  backdrop-filter: blur(10px); /* Frosted glass effect */
   padding: 1rem 2rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -94,7 +124,7 @@ html, body {
 .logo a {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--gold);
+  color: silver;
 }
 .nav-links {
   list-style: none;
@@ -105,11 +135,12 @@ html, body {
   color: #333;
   text-decoration: none;
   font-weight: 600;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
+  transition: color 2.3s ease, text-shadow 1.3s ease;
 }
-.nav-links a:hover {
+.nav-links a:hover, .nav-links a:focus {
   color: #666;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  outline: none;
 }
 
 /* --------------------------
@@ -143,7 +174,7 @@ html, body {
   width: 90%;
   max-width: 1200px;
   margin: 2rem auto;
-  padding: 2rem;
+  padding: var(--container-padding);
   background: rgba(255, 255, 255, 0.8);
   border: 2px solid var(--silver);
   border-radius: 16px;
@@ -156,6 +187,9 @@ html, body {
 .snippet-form,
 .snippet-list {
   padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 .snippet-form input,
 .snippet-form select,
@@ -182,34 +216,28 @@ html, body {
 /* --------------------------
    Gold Line Section Styles
 --------------------------- */
-
-/* Container for the gold line to ensure no overflow issues */
 .gold-line-section {
   position: relative;
   overflow: hidden;
 }
-
-/* Ensure the SVG scales across the screen */
 .gold-line {
   width: 100%;
-  height: auto;
+  height: inherit;
 }
-
-/* Animate the gold line's path for a flowing shimmer effect */
 .gold-line path {
-  stroke-linecap: round;  /* Smooth ends for a premium look */
-  animation: shimmerLine 4s ease-in-out infinite;
+  stroke-linecap: round;
+  animation: shimmerLine 15s ease-in-out ;
 }
 
-/* Keyframes to animate the dash offset and add a shimmering glow */
+/* Keyframes for the shimmer animation */
 @keyframes shimmerLine {
   0% {
     stroke-dashoffset: 1000;
-    filter: brightness(1);
+    filter: brightness(1.6);
   }
   50% {
     stroke-dashoffset: 0;
-    filter: brightness(1.8) drop-shadow(0 0 5px var(--gold));
+    filter: brightness(2.9) drop-shadow(0 0 5px var(--gold));
   }
   100% {
     stroke-dashoffset: -1000;
@@ -227,6 +255,6 @@ html, body {
   }
   .nav-links {
     flex-direction: column;
-    gap: 0.5em;
+    gap: 2rem;
   }
 }

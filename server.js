@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const session = require('express-session');
 const authController = require('./controllers/auth.js');
+const Snippet = require('./models/snippets'); // Import the snippet model
 const port = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -17,7 +18,7 @@ mongoose.connection.on('connected', () => {
 // Serve static files from the public folder
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
-app.use(methodOverride('_method'));
+app.use(methodOverride('_method')); // Enables PUT, DELETE via query parameter
 
 // Session setup
 app.use(
@@ -46,9 +47,13 @@ function isAuthenticated(req, res, next) {
 app.use('/dashboard', isAuthenticated);
 app.use('/snippets', isAuthenticated);
 
-// Dashboard route (first page after login)
-app.get('/dashboard', (req, res) => {
-  res.render('dashboard', { user: req.session.user, snippets: [] });
+// Dashboard route – Retrieve snippets from the database
+app.get('/dashboard', (req, res, next) => {
+  Snippet.find({})
+    .then((snippets) => {
+      res.render('dashboard', { user: req.session.user, snippets });
+    })
+    .catch(next);
 });
 
 // VIP Lounge example route
@@ -60,10 +65,20 @@ app.get('/vip-lounge', (req, res) => {
   }
 });
 
-app.post('/snippets', (req, res) => {
-  res.render('dashboard');
+// POST route to save a snippet
+app.post('/snippets', (req, res, next) => {
+  const { title, language, code } = req.body;
+  Snippet.create({ title, language, code })
+    .then(() => res.redirect('/dashboard'))
+    .catch(next);
 });
 
+// DELETE route to remove a snippet by its ID
+app.delete('/snippets/:id', (req, res, next) => {
+  Snippet.findByIdAndDelete(req.params.id)
+    .then(() => res.redirect('/dashboard'))
+    .catch(next);
+});
 
 // Use the auth controller for all auth-related routes
 app.use('/auth', authController);

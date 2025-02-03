@@ -1,3 +1,4 @@
+<!-- views/dashboard.ejs -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -52,6 +53,10 @@
               <li>
                 <h3><%= snippet.title %> - <%= snippet.language %></h3>
                 <pre><code><%= snippet.code %></code></pre>
+                <!-- Delete snippet form -->
+                <form action="/snippets/<%= snippet._id %>?_method=DELETE" method="POST">
+                  <button type="submit" class="btn secondary-btn">Delete</button>
+                </form>
               </li>
             <% }) %>
           </ul>

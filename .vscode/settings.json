@@ -1,0 +1,7 @@
+{
+    "editor.mouseWheelZoom": true,
+    "editor.mouseWheelScrollSensitivity": 2,
+    "typescript.inlayHints.parameterTypes.enabled": false,
+    "javascript.inlayHints.parameterTypes.enabled": true,
+    "javascript.preferGoToSourceDefinition": false
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to CodeArch</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    
+  </head>
+  <body>
+    <%- include('partials/nav', { user: user }) %>
+    <br><%- include('partials/goldLine', { user: user }) %>
+    <!-- Include the high-end navigation bar -->
+     <!-- Main Apple-inspired Home Content -->
+    <main class="home-container">
+      <div class="hero">
+        <h1 class="shimmer-text"><em>CodeArch</em></h1>
+        <p class="tagline">Streamline your code. Elevate your creativity.</p>
+        <% if (!user) { %>
+          <a href="/auth/sign-in" class="btn primary-btn">Sign In</a>
+          <a href="/auth/sign-up" class="btn secondary-btn">Sign Up</a>
+        <% } else { %>
+          <a href="/dashboard" class="btn primary-btn">Go to Dashboard</a>
+        <% } %>
+      </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p>&copy; <%= new Date().getFullYear() %> CodeArch. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

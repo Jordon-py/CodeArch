@@ -1,0 +1,17 @@
+<header class="site-header">
+  <nav class="navbar">
+    <div class="logo">
+      <a href="/">CodeArch</a>
+    </div>
+    <ul class="nav-links">
+      <% if (user) { %>
+        <li><a href="/dashboard" class="nav-item">Dashboard</a></li>
+        <li><a href="/vip-lounge" class="nav-item">VIP Lounge</a></li>
+        <li><a href="/auth/sign-out" class="nav-item btn nav-btn">Sign Out</a></li>
+      <% } else { %>
+        <li><a href="/auth/sign-up" class="nav-item btn nav-btn">Sign Up</a></li>
+        <li><a href="/auth/sign-in" class="nav-item btn nav-btn">Sign In</a></li>
+      <% } %>
+    </ul>
+  </nav>
+</header>

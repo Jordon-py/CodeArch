@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard - CodeArch</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <!-- Include the navigation bar -->
+    <%- include('partials/nav', { user: user }) %>
+
+    <!-- Dashboard Main Content -->
+    <main class="dashboard-container">
+      <header class="dashboard-header">
+        <h1 class="shimmer-text">Hello, <span><%= user.name %></span>! Welcome to Your Dashboard</h1>
+      </header>
+      
+      <!-- Code Snippet Form -->
+      <section class="snippet-form">
+        <h2>Save a Code Snippet</h2>
+        <form action="/snippets" method="POST">
+          <input type="text" name="title" placeholder="Snippet Title" required />
+          <select name="language" required>
+            <option value="JavaScript">JavaScript</option>
+            <option value="Python">Python</option>
+            <option value="HTML">HTML</option>
+            <option value="CSS">CSS</option>
+          </select>
+          <textarea name="code" placeholder="Write your code here..." rows="5" required></textarea>
+          <button type="submit" class="btn primary-btn">Save Snippet</button>
+        </form>
+      </section>
+      
+      <!-- Snippet List -->
+      <section class="snippet-list">
+        <h2>Your Saved Snippets</h2>
+        <% if (!snippets || snippets.length === 0) { %>
+          <p>No snippets saved yet. Start adding your first snippet!</p>
+        <% } else { %>
+          <ul>
+            <% snippets.forEach(snippet => { %>
+              <li>
+                <h3><%= snippet.title %> - <%= snippet.language %></h3>
+                <pre><code><%= snippet.code %></code></pre>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p>&copy; <%= new Date().getFullYear() %> CodeArch. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

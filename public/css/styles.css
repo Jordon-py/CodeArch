@@ -34,7 +34,8 @@ html, body {
   height: 100%;
   background: linear-gradient(270deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
   background-size: 600% 600%;
-  animation: gradientShift 20s ease-in-out; /* Extended duration for subtle movement */
+  animation: gradientShift 20s ease-in-out 1 forwards;
+
   color: #333;
   line-height: 1.6;
   letter-spacing: 0.5px;
@@ -49,7 +50,7 @@ html, body {
 
 /* Typography */
 h1, .hero h1 {
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   font-weight: 600;
   margin-bottom: calc(var(--base-spacing) * 1.5);
   letter-spacing: 1px;

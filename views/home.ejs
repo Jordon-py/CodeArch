@@ -5,22 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome to CodeArch</title>
     <link rel="stylesheet" href="/css/styles.css" />
-    
+    <%- include('partials/nav', { user: user }) %>
   </head>
   <body>
-    <%- include('partials/nav', { user: user }) %>
-    <br><%- include('partials/goldLine', { user: user }) %>
+    <br><br><%- include('partials/goldLine', { user: user }) %>
     <!-- Include the high-end navigation bar -->
      <!-- Main Apple-inspired Home Content -->
     <main class="home-container">
       <div class="hero">
-        <h1 class="shimmer-text"><em>CodeArch</em></h1>
-        <p class="tagline">Streamline your code. Elevate your creativity.</p>
+        <h1 class="shimmer-text", id="CodeArch">CodeArch</em></h1>
+        <p class="tagline">Streamline your code. Elevate your <br>creativity.</p>
         <% if (!user) { %>
-          <a href="/auth/sign-in" class="btn primary-btn">Sign In</a>
-          <a href="/auth/sign-up" class="btn secondary-btn">Sign Up</a>
+          <a href="/auth/sign-in" id="primary-btn">Sign In</a>
+          <a href="/auth/sign-up" id="primary-btn">Sign Up</a>
         <% } else { %>
-          <a href="/dashboard" class="btn primary-btn">Go to Dashboard</a>
+          <a href="/dashboard" id="primary-btn">Go to Dashboard</a>
         <% } %>
       </div>
     </main>

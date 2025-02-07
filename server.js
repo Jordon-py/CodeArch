@@ -12,14 +12,28 @@ const port = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+  useUnifiedTopology: true,
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch((err) => console.error('MongoDB connection error:', err));
 
   
 // Serve static files from the public folder
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method')); // Enables PUT, DELETE via query parameter
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://cjordon:Myhero143r@codearch.k8c6m.mongodb.net/?retryWrites=true&w=majority&appName=CodeArch";
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
 
 // Session setup
 app.use(

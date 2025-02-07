@@ -3,6 +3,7 @@
 
 /* CSS Variables for Color Scheme & Spacing */
 :root {
+  
   --gold: #D4AF37;
   --silver: #C0C0C0;
   --black: #000000;
@@ -18,16 +19,16 @@
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
+
+
 .home-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 90% 90%;
-  max-height:fit-content(100vh);
+    padding: 0rem 0rem;
+    min-height: calc(100vh - 80px); /* or as needed */
+    max-height: 100vh;             /* optional, depending on design */
 }
+  
+
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -35,35 +36,35 @@ html {
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
+
 .site-header {
-  height: 2px;
+  height: fit-content;
   width: 100%;
-  position: static;
+  position: relative;
   top: 0;
   z-index: 8;
   container-type: normal;
 }
 .dashboard-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  
+  align-items: top;
   columns: 3;
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: var(--container-padding);
-  background: rgba(255, 255, 255, 0.8);
-  border: 2px solid var(--silver);
-  border-radius: 12px;
+  max-width: 100%;
+  margin: 1rem auto;
+  background:linear-gradient(gradientShift --gradient-start --gradient-middle --gradient-end);
+  animation: both 10s ease-in-out 1;
+  border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 /* Use one background rule with a subtle animated gradient */
 html, body {
-  height:200%;
+  height: fit-content;
   background: linear-gradient(270deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
-  background-size:400%;
-  animation: gradientShift 10s ease-in-out 1 forwards;
+  background-size: fit-content;
+  animation:linear-gradient( 10s ease-in-out 1 forwards);
 
-  color: #333;
+  color: #333333c8;
   line-height: 1.5;
   letter-spacing: 0.9px;
 }
@@ -87,11 +88,28 @@ h1,#CodeArch, .hero h1 {
 p.snippet-form input, .snippet-form select, .snippet-form textarea {
   font-size: 1rem;
 }
-p.tagline{
-  font-stretch: 2rem;
-  font-size: 2rem;
-  font-variant:ultra-expanded;
-  
+/* Use relative units for padding and margins */
+.home-container {
+  padding: 0rem 0rem;
+  min-height: .5rem;
+}
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+.tagline {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+/* Add more media queries for different breakpoints */
+@media (max-width: 1024px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+  .tagline {
+    font-size: 1rem;
+  }
 }
 /* Shimmering Text Animation */
 @keyframes textShine {
@@ -140,7 +158,7 @@ p.tagline{
    Navigation Styles
 --------------------------- */
 .site-header {
-  height: 1rem;
+  height: 0rem;
   width: 100%;
   position: sticky;
   top: 0;
@@ -150,7 +168,7 @@ p.tagline{
 .navbar {
   background: rgba(232, 232, 232, 0.8); /* Semi-transparent background */
   backdrop-filter: blur(10px); /* Frosted glass effect */
-  padding: 1rem 2rem;
+  padding: .5rem .5rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: space-between;
@@ -164,7 +182,7 @@ p.tagline{
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
 }
 .nav-links a {
   color: #333;
@@ -183,14 +201,15 @@ p.tagline{
 --------------------------- */
 .home-container {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start;
   align-items: center;
   text-align: center;
-  padding: 4rem 2rem;
+  padding: .5rem .5rem;
   min-height: calc(100vh - 80px);
 }
 .hero {
-  max-width: 800px;
+  max-width: fit-content;
   margin: auto;
 }
 .hero h1 {
@@ -199,7 +218,8 @@ p.tagline{
 }
 .tagline {
   font-size: 1.25rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+  flex-grow: 4;
 }
 
 /* --------------------------

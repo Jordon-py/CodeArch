@@ -10,11 +10,12 @@ const authController = require('./controllers/auth.js');
 const Snippet = require('./models/snippets'); // Import the snippet model
 const port = process.env.PORT || 3000;
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-mongoose.connection.on('connected', () => {
-  console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 });
 
+  
 // Serve static files from the public folder
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));

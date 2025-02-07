@@ -62,7 +62,7 @@ html, body {
   height: fit-content;
   background: linear-gradient(270deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
   background-size: fit-content;
-  animation:linear-gradient( 10s ease-in-out 1 forwards);
+  animation:( 10s ease-in-out 1 forwards);
 
   color: #333333c8;
   line-height: 1.5;

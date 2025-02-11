@@ -1,0 +1,92 @@
+/* public/css/base.css */
+
+/* Import Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+:root {
+  --gold: #D4AF37;
+  --silver: #C0C0C0;
+  --black: #000000;
+  --white: #ffffff;
+  --gradient-start: #000000;
+  --gradient-middle: #434343;
+  --gradient-end: #C0C0C0;
+  --base-spacing: 1rem;
+  --bg-color: #ffffff;
+  --text-color: #333333;
+}
+
+/* Global Reset */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 22px;
+  font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+/* Shared Animations */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes textShine {
+  0% { background-position: 0%; }
+  100% { background-position: 175%; }
+}
+
+@keyframes lift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-8px);
+
+  }
+}
+
+.btn {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: calc(var(--base-spacing) * 0.5) var(--base-spacing);
+  background: rgba(40, 0, 4, 0.78);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  margin-top: 2rem;
+
+  /* Smooth transition for both transform and box-shadow */
+  transition: transform 0.6s ease-in-out, box-shadow 0.5s ease-in-out;
+}
+
+.btn:hover,
+.btn:focus {
+  /* Lifts the button and slightly increases its size */
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  outline: none;
+}
+.gold-line {
+  animation-duration: 1s;
+  transform: perspective(1000px) rotateX(90deg);
+  animation-name: glide across screen;
+  transition-behavior: smooth;
+  animation-iteration-count: 7;
+
+}

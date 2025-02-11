@@ -1,315 +1,53 @@
-/* Import Montserrat from Google Fonts */
+/* Base CSS: Resets, Fonts, Variables, and Shared Animations */
+
+/* Import Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
 
-/* CSS Variables for Color Scheme & Spacing */
 :root {
-  
   --gold: #D4AF37;
   --silver: #C0C0C0;
   --black: #000000;
   --white: #ffffff;
-  --gradient-start: #000000;   /* deep black */
-  --gradient-middle: #434343;  /* dark gray */
-  --gradient-end: #C0C0C0;      /* silver */
-  --base-spacing: 0rem;
-  --container-padding: 0rem;
+  --gradient-start: #000000;
+  --gradient-middle: #434343;
+  --gradient-end: #C0C0C0;
+  --base-spacing: 1rem;
+  --bg-color: #ffffff;
+  --text-color: #333333;
+}
+
+[data-theme="dark"] {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
 }
 
 /* Global Reset & Base Styles */
-* {
+*, *::before, *::after {
   margin: 0;
-  padding: 0;
-}
-
-
-.home-container {
-    padding: 0rem 0rem;
-    min-height: calc(100vh - 80px); /* or as needed */
-    max-height: 100vh;             /* optional, depending on design */
-}
-  
+  padding: 0;}
 
 html {
+  font-size: 16px;
+  font-family: 'Montserrat';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 16px;
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
+  }
 
-.site-header {
-  height: fit-content;
-  width: 100%;
-  position: relative;
-  top: 0;
-  z-index: 8;
-  container-type: normal;
-}
-.dashboard-container {
-  display: flex;
-  
-  align-items: top;
-  columns: 3;
-  max-width: 100%;
-  margin: 1rem auto;
-  background:linear-gradient(gradientShift --gradient-start --gradient-middle --gradient-end);
-  animation: both 10s ease-in-out 1;
-  border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-}
-/* Use one background rule with a subtle animated gradient */
-html, body {
-  height: fit-content;
-  background: linear-gradient(270deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
-  background-size: fit-content;
-  animation:( 10s ease-in-out 1 forwards);
-
-  color: #333333c8;
+body {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   line-height: 1.5;
-  letter-spacing: 0.9px;
 }
 
-/* Keyframes for a smooth background gradient shift */
+/* Shared Animations */
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Typography */
-h1,#CodeArch, .hero h1 {
-  font-size: 9rem;
-  font-weight: 3rem;
-  margin-bottom: 0rem;
-  letter-spacing: .5rem;
-  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-p.snippet-form input, .snippet-form select, .snippet-form textarea {
-  font-size: 1rem;
-}
-/* Use relative units for padding and margins */
-.home-container {
-  padding: 0rem 0rem;
-  min-height: .5rem;
-}
-.hero h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-.tagline {
-  font-size: 1.25rem;
-  margin-bottom: 2rem;
-}
-
-/* Add more media queries for different breakpoints */
-@media (max-width: 1024px) {
-  .hero h1 {
-    font-size: 2.5rem;
-  }
-  .tagline {
-    font-size: 1rem;
-  }
-}
-/* Shimmering Text Animation */
 @keyframes textShine {
-  75% { background-position: -220%; }
-  150% { background-position: 400%; }
-}
-.shimmer-text {
-  background: linear-gradient(150deg, var(--gold), #fff8c7, var(--gold));
-  background-size: 175%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: textShine 3.3s linear infinite;
-  animation-timing-function: ease-in-out;
-}
-
-/* Button Base & 3D Floating Effect */
-#primary-btn, #secondary-btn {
-  display: inline-block;
-  padding: 0.05rem 8.5rem;
-  border-radius: 12px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: transform 2.1s ease-in-out, box-shadow 1.4s ease-in-out;
-}
-#primary-btn:hover, #primary-btn:focus {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  outline: none;
-}
-
-/* Primary & Secondary Button Variants */
-#primary-btn, #secondary-btn  {
-  background: linear-gradient(135deg, silver 30%,rgb(255, 255, 255) 50%, silver 80%);
-  color: var(--black);
-}
-#primary-btn:hover, #secondary-btn:hover {
-  filter: brightness(1.1);
-  background: linear-gradient(135deg, rgba(192, 192, 192, 0.791) 35%,rgb(255, 255, 255) 50%,rgba(192, 192, 192, 0.73) 90%);
-  animation: textShine 3.3s infinite;
-  color:rgb(0, 0, 0);
-}
-
-
-/* --------------------------
-   Navigation Styles
---------------------------- */
-.site-header {
-  height: 0rem;
-  width: 100%;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  container-type: normal 1rem;
-}
-.navbar {
-  background: rgba(232, 232, 232, 0.8); /* Semi-transparent background */
-  backdrop-filter: blur(10px); /* Frosted glass effect */
-  padding: .5rem .5rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.logo a {
-  font-size: 2rem;
-  font-weight: 700;
-  color: silver;
-}
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 1rem;
-}
-.nav-links a {
-  color: #333;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 2.3s ease, text-shadow 1.3s ease;
-}
-.nav-links a:hover, .nav-links a:focus {
-  color: #666;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-  outline: none;
-}
-
-/* --------------------------
-   Home Page Styles
---------------------------- */
-.home-container {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  align-items: center;
-  text-align: center;
-  padding: .5rem .5rem;
-  min-height: calc(100vh - 80px);
-}
-.hero {
-  max-width: fit-content;
-  margin: auto;
-}
-.hero h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-.tagline {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  flex-grow: 4;
-}
-
-/* --------------------------
-   Dashboard Styles
---------------------------- */
-.dashboard-container {
-  width: 90%;
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: var(--container-padding);
-  background: rgba(255, 255, 255, 0.8);
-  border: 2px solid var(--silver);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-}
-.dashboard-header h1 {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-}
-.snippet-form,
-.snippet-list {
-  padding: 2rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-.snippet-form input,
-.snippet-form select,
-.snippet-form textarea {
-  width: 100%;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.9);
-}
-
-/* --------------------------
-   Footer Styles
---------------------------- */
-.site-footer {
-  text-align: center;
-  padding: 1rem 0;
-  background: rgba(255, 255, 255, 0.8);
-  border-top: 1px solid #ddd;
-  margin-top: 2rem;
-}
-
-/* --------------------------
-   Gold Line Section Styles
---------------------------- */
-.gold-line-section {
-  position: relative;
-  overflow: hidden;
-}
-.gold-line {
-  width: 100%;
-  height: inherit;
-}
-.gold-line path {
-  stroke-linecap: round;
-  animation: shimmerLine 15s ease-in-out ;
-}
-
-/* Keyframes for the shimmer animation */
-@keyframes shimmerLine {
-  0% {
-    stroke-dashoffset: 1000;
-    filter: brightness(1.6);
-  }
-  50% {
-    stroke-dashoffset: 0;
-    filter: brightness(2.9) drop-shadow(0 0 5px var(--gold));
-  }
-  100% {
-    stroke-dashoffset: -1000;
-    filter: brightness(1.3);
-  }
-}
-
-/* --------------------------
-   Responsive Adjustments
---------------------------- */
-@media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    text-align: center;
-  }
-  .nav-links {
-    flex-direction: column;
-    gap: 2rem;
-  }
+  0% { background-position: 0%; }
+  100% { background-position: 175%; }
 }

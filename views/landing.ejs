@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- Declare the document type and set the language to English -->
+<head>
+  <meta charset="UTF-8" /> <!-- Set the character encoding to UTF-8 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- Ensure responsive design on mobile devices -->
+  <title>Welcome to CodeArch</title> <!-- Set the title of the page -->
+  <link rel="stylesheet" href="/css/base.css" /> 
+  <link rel="stylesheet" href="/css/landing.css" /> <!-- Link to the landing page specific CSS file -->
+  
+</head>
+  <!-- Adding a dedicated class to scope landing-page styles -->
+  <body class="landing-page"> <!-- Apply landing-page specific styles -->
+    
+    <%- include('partials/nav', { user: user }) %> <!-- Include the navigation partial and pass the user object -->
+    <%- include('partials/goldLine', { user: user }) %> <!-- Include the goldLine partial and pass the user object -->
+    
+    <main class="home-container" role="main"> 
+        <h1 class="shimmer-text" id="CodeArch" aria-label="CodeArch"><em>CodeArch</em></h1> 
+        <p class="tagline">Streamline your code. Elevate your creativity.</p> 
+      
+      </section>
+    
+    </main>
+    <footer class="site-footer" role="contentinfo"> <!-- Footer with role for accessibility -->
+      <p>&copy; <%= new Date().getFullYear() %> CodeArch. All rights reserved.</p> <!-- Copyright notice with dynamic year -->
+    </footer>
+  </body>
+</html>

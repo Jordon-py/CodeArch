@@ -1,18 +1,14 @@
-<header class="site-header">
   <nav class="navbar">
-      <div class="logo">
-        <a class="shimmer-text" href="/">CodeArch</a>
-      </div>
-      <ul class="nav-links"></ul>
-          <% if (user) { %>
-        <li><a href="/dashboard" class="nav-item btn nav-btn">Dashboard</a></li>
-        <li><a href="/vip-lounge" class="nav-item btn nav-btn">VIP Lounge</a></li>
-        <li><a href="/auth/sign-out" class="nav-item btn nav-btn">Sign Out</a></li>
-        <!-- Enhanced Dynamic Gold Line Section -->
-         <% } else { %>
-        <li><a href="/auth/sign-up" class="nav-item btn nav-btn">Sign Up</a></li>
-        <li><a href="/auth/sign-in" class="nav-item btn nav-btn">Sign In</a></li>
-      <% } %>
+    <link rel="stylesheet" href="css/styles.css" />
+        <a class="shimmer-text" href="/"><em>CodeArch</em></a>
+        <% if (user) { %>
+          <a href="/dashboard" class="btn":hover>Dashboard</a>
+          <a href="/vip-lounge" class="btn":hover>VIP Lounge</a>
+          <a href="/auth/sign-out" class="btn":hover>Sign Out</a>
+          <!-- Enhanced Dynamic Gold Line Section -->
+        <% } else { %>
+          <a href="/auth/sign-up" class="btn":hover><em>Sign Up</em></a>
+          <a href="/auth/sign-in" class="btn":hover><em>Sign In</em></a>
+        <% } %>
     </ul>
-  </nav>
-</header>
+</nav>

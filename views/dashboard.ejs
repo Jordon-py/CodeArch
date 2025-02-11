@@ -1,59 +1,61 @@
-<!-- views/dashboard.ejs -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Dashboard - CodeArch</title>
-    <link rel="stylesheet" href="/css/styles.css" />
-    <%- include('partials/nav', { user: user }) %> <!-- Include the navigation bar -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeArch Dashboard</title>
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/dashboard.css" />
   </head>
   <body>
-    <br><br><%- include('partials/goldLine', { user: user }) %>
-    <main class="dashboard-container">
-      <header class="dashboard-header">
-        <h1 class="shimmer-text">Hello, <span><%= user.name %></span>! Welcome to Your Dashboard</h1>
-      </header>
-      
-      <!-- Code Snippet Form -->
-      <section class="snippet-form">
-        <h2>Save a Code Snippet</h2>
-        <form action="/snippets" method="POST">
-          <input type="text" name="title" placeholder="Snippet Title" required />
-          <select name="language" required>
-            <option value="JavaScript">JavaScript</option>
-            <option value="Python">Python</option>
-            <option value="HTML">HTML</option>
-            <option value="CSS">CSS</option>
-          </select>
-          <textarea name="code" placeholder="Write your code here..." rows="5" required></textarea>
-          <button type="submit" class="btn primary-btn">Save Snippet</button>
-        </form>
-      </section>
-      
-      <!-- Snippet List -->
-      <section class="snippet-list">
-        <h2>Your Saved Snippets</h2>
-        <% if (!snippets || snippets.length === 0) { %>
-          <p>No snippets saved yet. Start adding your first snippet!</p>
-        <% } else { %>
-          <ul>
-            <% snippets.forEach(snippet => { %>
+    <header class="dashboard-header" role="banner">
+      <div class="branding">
+        <h1>CodeArch Dashboard</h1>
+      </div>
+      <div class="user-controls">
+        <span class="user-name"><%= user.username %></span>
+        <a href="/auth/sign-out" class="btn secondary-btn">Sign Out</a>
+      </div>
+    </header>
+    <nav class="dashboard-sidebar" role="navigation" aria-label="Dashboard Navigation">
+      <ul>
+        <li>
+          <a href="/dashboard/archive" class="<%= activeSection === 'archive' ? 'active' : '' %>">
+            My Archive
+          </a>
+        </li>
+        <li>
+          <a href="/dashboard/upload" class="<%= activeSection === 'upload' ? 'active' : '' %>">
+            Upload Code
+          </a>
+        </li>
+        <li>
+          <a href="/dashboard/settings" class="<%= activeSection === 'settings' ? 'active' : '' %>">
+            Settings
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <main class="dashboard-main" role="main">
+      <section class="dashboard-content">
+        <h2>Welcome, <%= user.username %>!</h2>
+        <p>Here is a summary of your code archives and recent activity.</p>
+        <% if (snippets && snippets.length > 0) { %>
+          <ul class="snippets-list">
+            <% snippets.forEach(function(snippet) { %>
               <li>
-                <h3><%= snippet.title %> - <%= snippet.language %></h3>
+                <h3><%= snippet.title %></h3>
+                <p><%= snippet.language %></p>
                 <pre><code><%= snippet.code %></code></pre>
-                <!-- Delete snippet form -->
-                <form action="/snippets/<%= snippet._id %>?_method=DELETE" method="POST">
-                  <button type="submit" class="btn secondary-btn">Delete</button>
-                </form>
               </li>
             <% }) %>
           </ul>
+        <% } else { %>
+          <p>No snippets available.</p>
         <% } %>
       </section>
     </main>
-    
-    <!-- Footer -->
-    <footer class="site-footer">
+    <footer class="dashboard-footer" role="contentinfo">
       <p>&copy; <%= new Date().getFullYear() %> CodeArch. All rights reserved.</p>
     </footer>
   </body>

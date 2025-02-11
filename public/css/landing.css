@@ -1,0 +1,58 @@
+a.navbar{
+  flex: auto;
+  min-width: 95%;
+  flex-direction: row;
+  align-content: space-between;
+  align-items: center;
+  color: var(--gold);
+}
+
+
+
+.landing-page {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
+  background-size: 520% 420%;
+  animation: gradientShift 13s ease-in-out 1 forwards;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: space-evenly;
+
+  /* Home Container */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0.5rem;
+  margin-bottom: 3rem;
+  padding: var(--base-spacing);
+  min-height: calc(100vh - 80px);
+  justify-content: center;
+  }
+
+  .tagline {
+  font-size:larger;
+  margin-bottom: 3rem;
+    }
+  }
+
+
+/* Shimmer Text Animation */
+.shimmer-text {
+  background: linear-gradient(150deg, var(--gold), #fff8c7, var(--gold));
+  background-size: 195%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShine 3.3s linear infinite;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+  .tagline {
+    font-size: 1rem;
+  }
+}

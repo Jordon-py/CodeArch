@@ -2,8 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
 
 /* CSS Variables for Color Scheme & Spacing */
-:root {
-  
+:root {  
   --gold: #D4AF37;
   --silver: #C0C0C0;
   --black: #000000;
@@ -21,13 +20,11 @@
   padding: 0;
 }
 
-
 .home-container {
-    padding: 0rem 0rem;
-    min-height: calc(100vh - 80px); /* or as needed */
-    max-height: 100vh;             /* optional, depending on design */
+  padding: 0rem 0rem;
+  min-height: calc(100vh - 80px); /* or as needed */
+  max-height: 100vh;             /* optional, depending on design */
 }
-  
 
 html {
   -webkit-font-smoothing: antialiased;
@@ -38,32 +35,33 @@ html {
 }
 
 .site-header {
-  height: fit-content;
+  height: 100%;
   width: 100%;
-  position: relative;
+  position: static;
   top: 0;
-  z-index: 8;
+  z-index: 4;
   container-type: normal;
 }
+
 .dashboard-container {
   display: flex;
-  
+  flex-direction: column;
   align-items: top;
   columns: 3;
   max-width: 100%;
-  margin: 1rem auto;
-  background:linear-gradient(gradientShift --gradient-start --gradient-middle --gradient-end);
-  animation: both 10s ease-in-out 1;
-  border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  margin: 1rem;
+  background: linear-gradient(gradientShift --gradient-start --gradient-middle --gradient-end);
+  animation: both 10s ease-in-out 2;
+  border-radius: 18px;
+  box-shadow: 0 11px 25px rgba(0, 0, 0, 0.2);
 }
+
 /* Use one background rule with a subtle animated gradient */
 html, body {
   height: fit-content;
   background: linear-gradient(270deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
   background-size: fit-content;
-  animation:( 10s ease-in-out 1 forwards);
-
+  animation: (10s ease-in-out 1 forwards);
   color: #333333c8;
   line-height: 1.5;
   letter-spacing: 0.9px;
@@ -71,46 +69,63 @@ html, body {
 
 /* Keyframes for a smooth background gradient shift */
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0% { background-position: 69% 5%; }
+  50% { background-position: 110% 20%; }
   100% { background-position: 0% 50%; }
 }
 
 /* Typography */
-h1,#CodeArch, .hero h1 {
+h1, #CodeArch, .hero h1 {
   font-size: 9rem;
   font-weight: 3rem;
   margin-bottom: 0rem;
-  letter-spacing: .5rem;
+  letter-spacing: 0.5rem;
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
+
+.snippet-form {
+  margin-left: 1rem;
+  margin-right: 2rem;
+}
+
 p.snippet-form input, .snippet-form select, .snippet-form textarea {
   font-size: 1rem;
 }
+
 /* Use relative units for padding and margins */
 .home-container {
   padding: 0rem 0rem;
-  min-height: .5rem;
+  min-height: 0.5rem;
 }
+
 .hero h1 {
   font-size: 3rem;
   margin-bottom: 1rem;
 }
+
 .tagline {
-  font-size: 1.25rem;
+  font-size: 1.75rem;
   margin-bottom: 2rem;
+  background: linear-gradient(150deg, silver , rgb(255, 255, 255), silver );
+  background-size: 175%;
+  background-clip:text;
+  -webkit-text-fill-color: transparent;
+  animation: textShine 6.3s linear infinite;
+  animation-timing-function: 15s ease-in-out;
 }
+
 
 /* Add more media queries for different breakpoints */
 @media (max-width: 1024px) {
   .hero h1 {
-    font-size: 2.5rem;
+    font-size: 4rem;
   }
   .tagline {
-    font-size: 1rem;
+    font-size: 2rem;
   }
 }
+
 /* Shimmering Text Animation */
 @keyframes textShine {
   75% { background-position: -220%; }
@@ -122,8 +137,8 @@ p.snippet-form input, .snippet-form select, .snippet-form textarea {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: textShine 3.3s linear infinite;
-  animation-timing-function: ease-in-out;
+  animation: textShine 4s linear infinite;
+  animation-timing-function: 16s ease-in-out;
 }
 
 /* Button Base & 3D Floating Effect */
@@ -133,26 +148,25 @@ p.snippet-form input, .snippet-form select, .snippet-form textarea {
   border-radius: 12px;
   font-weight: 600;
   text-decoration: none;
-  transition: transform 2.1s ease-in-out, box-shadow 1.4s ease-in-out;
+  transition: transform 1.9s ease-in-out, box-shadow 1.6s ease-in-out;
 }
 #primary-btn:hover, #primary-btn:focus {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.3);
   outline: none;
 }
 
 /* Primary & Secondary Button Variants */
-#primary-btn, #secondary-btn  {
-  background: linear-gradient(135deg, silver 30%,rgb(255, 255, 255) 50%, silver 80%);
+#primary-btn, #secondary-btn {
+  background: linear-gradient(135deg, silver 30%, rgb(255, 255, 255) 50%, silver 80%);
   color: var(--black);
 }
 #primary-btn:hover, #secondary-btn:hover {
-  filter: brightness(1.1);
-  background: linear-gradient(135deg, rgba(192, 192, 192, 0.791) 35%,rgb(255, 255, 255) 50%,rgba(192, 192, 192, 0.73) 90%);
+  filter: brightness(1.3);
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.791) 35%, rgb(255, 255, 255) 50%, rgba(192, 192, 192, 0.73) 90%);
   animation: textShine 3.3s infinite;
-  color:rgb(0, 0, 0);
+  color: rgb(0, 0, 0);
 }
-
 
 /* --------------------------
    Navigation Styles
@@ -168,7 +182,7 @@ p.snippet-form input, .snippet-form select, .snippet-form textarea {
 .navbar {
   background: rgba(232, 232, 232, 0.8); /* Semi-transparent background */
   backdrop-filter: blur(10px); /* Frosted glass effect */
-  padding: .5rem .5rem;
+  padding: 0.5rem 0.5rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: space-between;
@@ -192,7 +206,7 @@ p.snippet-form input, .snippet-form select, .snippet-form textarea {
 }
 .nav-links a:hover, .nav-links a:focus {
   color: #666;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  text-shadow: 1px 6px 8px rgba(0, 0, 0, 0.7);
   outline: none;
 }
 
@@ -205,7 +219,7 @@ p.snippet-form input, .snippet-form select, .snippet-form textarea {
   align-content: flex-start;
   align-items: center;
   text-align: center;
-  padding: .5rem .5rem;
+  padding: 0.5rem 0.5rem;
   min-height: calc(100vh - 80px);
 }
 .hero {
@@ -281,7 +295,7 @@ p.snippet-form input, .snippet-form select, .snippet-form textarea {
 }
 .gold-line path {
   stroke-linecap: round;
-  animation: shimmerLine 15s ease-in-out ;
+  animation: shimmerLine 15s ease-in-out;
 }
 
 /* Keyframes for the shimmer animation */

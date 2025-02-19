@@ -17,17 +17,17 @@
       <!-- Code Snippet Form -->
       <section class="snippet-form">
         <h2>Save a Code Snippet</h2>
-        <form action="/snippets" method="POST">
-          <input type="text" name="title" placeholder="Snippet Title" required />
+        <article aria-modal="" action="/snippets" method="POST">
+          <input type="text" name="title" placeholder="Snippet Title" required autocapitalize="words" />
           <select name="language" required>
             <option value="JavaScript">JavaScript</option>
             <option value="Python">Python</option>
             <option value="HTML">HTML</option>
             <option value="CSS">CSS</option>
           </select>
-          <textarea name="code" placeholder="Write your code here..." rows="5" required></textarea>
+          <code placeholder="Write your code here..." rows="4" required></code>
           <button type="submit" class="btn primary-btn">Save Snippet</button>
-        </form>
+        </article>
       </section>
       
       <!-- Snippet List -->

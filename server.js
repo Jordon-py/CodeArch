@@ -52,11 +52,6 @@ app.get('/', (req, res) => {
   res.render('home', { user: req.session.user });
 });
 
-// Middleware to check authentication
-function isAuthenticated(req, res, next) {
-  if (req.session.user) return next();
-  res.redirect('/auth/sign-in');
-}
 
 // Protected routes: dashboard and snippets
 app.use('/dashboard', isAuthenticated);
@@ -70,6 +65,13 @@ app.get('/dashboard', (req, res, next) => {
     })
     .catch(next);
 });
+
+// Middleware to check authentication
+function isAuthenticated(req, res, next) {
+  if (req.session.user) return next();
+  res.redirect('/auth/sign-in');
+}
+
 
 // VIP Lounge example route
 app.get('/vip-lounge', (req, res) => {

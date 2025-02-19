@@ -90,6 +90,9 @@ p.snippet-form input, .snippet-form select, .snippet-form textarea {
 }
 /* Use relative units for padding and margins */
 .home-container {
+  display: flex;
+  flex-direction:row;
+  -webkit-box-flex:inherit;
   padding: 0rem 0rem;
   min-height: .5rem;
 }
@@ -171,7 +174,7 @@ p.snippet-form input, .snippet-form select, .snippet-form textarea {
   padding: .5rem .5rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 }
 .logo a {
@@ -180,7 +183,7 @@ p.snippet-form input, .snippet-form select, .snippet-form textarea {
   color: silver;
 }
 .nav-links {
-  list-style: none;
+  list-style: lower-roman;
   display: flex;
   gap: 1rem;
 }
@@ -188,7 +191,8 @@ p.snippet-form input, .snippet-form select, .snippet-form textarea {
   color: #333;
   text-decoration: none;
   font-weight: 600;
-  transition: color 2.3s ease, text-shadow 1.3s ease;
+  transition: color 2.3s ease-in-out, text-shadow 1.3s ease-in-out;
+  transform: scale3d(1,2,5);
 }
 .nav-links a:hover, .nav-links a:focus {
   color: #666;
@@ -201,7 +205,7 @@ p.snippet-form input, .snippet-form select, .snippet-form textarea {
 --------------------------- */
 .home-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-content: flex-start;
   align-items: center;
   text-align: center;
@@ -209,8 +213,8 @@ p.snippet-form input, .snippet-form select, .snippet-form textarea {
   min-height: calc(100vh - 80px);
 }
 .hero {
-  max-width: fit-content;
-  margin: auto;
+  max-width: 100%;
+  margin: 1rem, 1rem;
 }
 .hero h1 {
   font-size: 3rem;

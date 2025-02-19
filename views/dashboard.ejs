@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/dashboard.css" />
   </head>
   <body>
+<<<<<<< HEAD
     <header class="dashboard-header" role="banner">
       <div class="branding">
         <h1>CodeArch Dashboard</h1>
@@ -43,6 +44,38 @@
         <% if (snippets && snippets.length > 0) { %>
           <ul class="snippets-list">
             <% snippets.forEach(function(snippet) { %>
+=======
+    <br><br><%- include('partials/goldLine', { user: user }) %>
+    <main class="dashboard-container">
+      <header class="dashboard-header">
+        <h1 class="shimmer-text">Hello, <span><%= user.name %></span>! Welcome to Your Dashboard</h1>
+      </header>
+      
+      <!-- Code Snippet Form -->
+      <section class="snippet-form">
+        <h2>Save a Code Snippet</h2>
+        <article aria-modal="" action="/snippets" method="POST">
+          <input type="text" name="title" placeholder="Snippet Title" required autocapitalize="words" />
+          <select name="language" required>
+            <option value="JavaScript">JavaScript</option>
+            <option value="Python">Python</option>
+            <option value="HTML">HTML</option>
+            <option value="CSS">CSS</option>
+          </select>
+          <code placeholder="Write your code here..." rows="4" required></code>
+          <button type="submit" class="btn primary-btn">Save Snippet</button>
+        </article>
+      </section>
+      
+      <!-- Snippet List -->
+      <section class="snippet-list">
+        <h2>Your Saved Snippets</h2>
+        <% if (!snippets || snippets.length === 0) { %>
+          <p>No snippets saved yet. Start adding your first snippet!</p>
+        <% } else { %>
+          <ul>
+            <% snippets.forEach(snippet => { %>
+>>>>>>> bb76a4cd9c67786ae8675a72a16e478d26b602d6
               <li>
                 <h3><%= snippet.title %></h3>
                 <p><%= snippet.language %></p>

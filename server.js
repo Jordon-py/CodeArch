@@ -41,11 +41,14 @@ app.get('/', (req, res) => {
   res.render('landing', { user: req.session.user });
 });
 
+<<<<<<< HEAD
 // Authentication middleware to protect routes
 function isAuthenticated(req, res, next) {
   if (req.session.user) return next();
   res.redirect('/auth/sign-in');
 }
+=======
+>>>>>>> bb76a4cd9c67786ae8675a72a16e478d26b602d6
 
 app.use('/dashboard', isAuthenticated);
 app.use('/snippets', isAuthenticated);
@@ -62,6 +65,13 @@ app.get('/dashboard', (req, res, next) => {
     })
     .catch(next);
 });
+
+// Middleware to check authentication
+function isAuthenticated(req, res, next) {
+  if (req.session.user) return next();
+  res.redirect('/auth/sign-in');
+}
+
 
 // VIP Lounge example route
 app.get('/vip-lounge', (req, res) => {

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   createCodeArtifact,
   deleteCodeArtifact,
+  importCodeArtifacts,
   listCodeArtifacts,
   summarizeCodeArtifacts,
   updateCodeArtifact,
@@ -33,7 +34,11 @@ export function useCodeArtifacts() {
   const [artifacts, setArtifacts] = useState([]);
   const [query, setQuery] = useState("");
   const [language, setLanguage] = useState("all");
+  const [tag, setTag] = useState("all");
+  const [collection, setCollection] = useState("all");
+  const [sortBy, setSortBy] = useState("updated");
   const [selectedId, setSelectedId] = useState(null);
+  const [feedback, setFeedback] = useState(null);
 
   const refreshArtifacts = useCallback(async () => {
     setStatus("loading");
@@ -83,26 +88,59 @@ export function useCodeArtifacts() {
     [artifacts],
   );
 
+  const tags = useMemo(
+    () => ["all", ...new Set(artifacts.flatMap((artifact) => artifact.tags))],
+    [artifacts],
+  );
+
+  const collections = useMemo(
+    () => ["all", ...new Set(artifacts.map((artifact) => artifact.collection))],
+    [artifacts],
+  );
+
   const filteredArtifacts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    return artifacts.filter((artifact) => {
+    const visibleArtifacts = artifacts.filter((artifact) => {
       const text = [
         artifact.title,
         artifact.language,
         artifact.collection,
         artifact.summary,
         artifact.code,
+        artifact.source,
         ...artifact.tags,
       ]
         .join(" ")
         .toLowerCase();
       const queryMatches = !normalizedQuery || text.includes(normalizedQuery);
       const languageMatches = language === "all" || artifact.language === language;
+      const tagMatches = tag === "all" || artifact.tags.includes(tag);
+      const collectionMatches = collection === "all" || artifact.collection === collection;
+      const quickViewMatches =
+        (sortBy !== "favorites" || artifact.favorite) &&
+        (sortBy !== "pinned" || artifact.pinned);
 
-      return queryMatches && languageMatches;
+      return (
+        queryMatches &&
+        languageMatches &&
+        tagMatches &&
+        collectionMatches &&
+        quickViewMatches
+      );
     });
-  }, [artifacts, language, query]);
+
+    return [...visibleArtifacts].sort((a, b) => {
+      const pinnedPriority = Number(Boolean(b.pinned)) - Number(Boolean(a.pinned));
+      if (pinnedPriority) return pinnedPriority;
+
+      if (sortBy === "title") return a.title.localeCompare(b.title);
+      if (sortBy === "language") return a.language.localeCompare(b.language);
+      if (sortBy === "usage") return b.usageCount - a.usageCount;
+      if (sortBy === "size") return b.code.length - a.code.length;
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    });
+  }, [artifacts, collection, language, query, sortBy, tag]);
 
   const selectedArtifact = useMemo(() => {
     return (
@@ -115,6 +153,21 @@ export function useCodeArtifacts() {
 
   const metrics = useMemo(() => summarizeCodeArtifacts(artifacts), [artifacts]);
 
+  const createArtifact = useCallback(async (input) => {
+    const response = await createCodeArtifact(input);
+
+    if (!response.ok) {
+      setError(response.error.message);
+      setFeedback({ type: "error", message: response.error.message });
+      return null;
+    }
+
+    setArtifacts((current) => [response.data, ...current]);
+    setSelectedId(response.data.id);
+    setFeedback({ type: "success", message: "Script saved to the archive." });
+    return response.data;
+  }, []);
+
   const createStarterArtifact = useCallback(async () => {
     const response = await createCodeArtifact({
       ...starterArtifact,
@@ -126,23 +179,57 @@ export function useCodeArtifacts() {
 
     if (!response.ok) {
       setError(response.error.message);
+      setFeedback({ type: "error", message: response.error.message });
       return null;
     }
 
     setArtifacts((current) => [response.data, ...current]);
     setSelectedId(response.data.id);
+    setFeedback({ type: "success", message: "Starter script added." });
     return response.data;
   }, []);
 
-  const markSelectedAsOpened = useCallback(async () => {
+  const updateSelectedArtifact = useCallback(
+    async (patch) => {
+      if (!selectedArtifact) return null;
+
+      const response = await updateCodeArtifact(selectedArtifact.id, patch);
+
+      if (!response.ok) {
+        setError(response.error.message);
+        setFeedback({ type: "error", message: response.error.message });
+        return null;
+      }
+
+      setArtifacts((current) =>
+        current.map((artifact) =>
+          artifact.id === response.data.id ? response.data : artifact,
+        ),
+      );
+      setSelectedId(response.data.id);
+      setFeedback({ type: "success", message: "Script changes saved." });
+      return response.data;
+    },
+    [selectedArtifact],
+  );
+
+  const markSelectedAsOpened = useCallback(async (patch = null, successMessage = null) => {
     if (!selectedArtifact) return null;
 
+    const updatePatch =
+      patch && typeof patch === "object"
+        ? patch
+        : {
+            usageCount: selectedArtifact.usageCount + 1,
+          };
+
     const response = await updateCodeArtifact(selectedArtifact.id, {
-      usageCount: selectedArtifact.usageCount + 1,
+      ...updatePatch,
     });
 
     if (!response.ok) {
       setError(response.error.message);
+      setFeedback({ type: "error", message: response.error.message });
       return null;
     }
 
@@ -151,6 +238,9 @@ export function useCodeArtifacts() {
         artifact.id === response.data.id ? response.data : artifact,
       ),
     );
+    if (successMessage) {
+      setFeedback({ type: "success", message: successMessage });
+    }
     return response.data;
   }, [selectedArtifact]);
 
@@ -160,6 +250,7 @@ export function useCodeArtifacts() {
     const response = await deleteCodeArtifact(selectedArtifact.id);
     if (!response.ok) {
       setError(response.error.message);
+      setFeedback({ type: "error", message: response.error.message });
       return null;
     }
 
@@ -168,8 +259,56 @@ export function useCodeArtifacts() {
       setSelectedId(next[0]?.id ?? null);
       return next;
     });
+    setFeedback({ type: "success", message: "Script removed from the archive." });
     return response.data;
   }, [selectedArtifact]);
+
+  const exportArtifacts = useCallback(() => {
+    const payload = {
+      product: "CodeArch",
+      exportedAt: new Date().toISOString(),
+      artifacts,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "codearch-snippet-archive.json";
+    link.click();
+    URL.revokeObjectURL(url);
+    setFeedback({ type: "success", message: "Archive export started." });
+  }, [artifacts]);
+
+  const importArtifacts = useCallback(async (file) => {
+    if (!file) return null;
+
+    try {
+      const payload = JSON.parse(await file.text());
+      const imported = Array.isArray(payload) ? payload : payload.artifacts;
+      const response = await importCodeArtifacts(imported);
+
+      if (!response.ok) {
+        setError(response.error.message);
+        setFeedback({ type: "error", message: response.error.message });
+        return null;
+      }
+
+      setArtifacts(response.data);
+      setSelectedId(response.data[0]?.id ?? null);
+      setFeedback({
+        type: "success",
+        message: `${response.meta.imported} script${response.meta.imported === 1 ? "" : "s"} imported.`,
+      });
+      return response.data;
+    } catch {
+      const message = "Import failed. Choose a valid CodeArch JSON archive.";
+      setError(message);
+      setFeedback({ type: "error", message });
+      return null;
+    }
+  }, []);
 
   return {
     artifacts,
@@ -183,11 +322,25 @@ export function useCodeArtifacts() {
     setQuery,
     language,
     setLanguage,
+    tag,
+    setTag,
+    tags,
+    collection,
+    setCollection,
+    collections,
+    sortBy,
+    setSortBy,
     languages,
     metrics,
+    feedback,
+    setFeedback,
+    createArtifact,
     createStarterArtifact,
+    updateSelectedArtifact,
     markSelectedAsOpened,
     removeSelectedArtifact,
+    exportArtifacts,
+    importArtifacts,
     refreshArtifacts,
   };
 }

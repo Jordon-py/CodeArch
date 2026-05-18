@@ -1,140 +1,142 @@
 export const seedCodeArtifacts = [
   {
-    id: "artifact-react-cache-hook",
-    title: "React query cache hook",
-    language: "JavaScript",
-    tags: ["react", "hooks", "cache"],
-    collection: "Frontend Systems",
-    summary: "A compact hook for cached async lookups with stale-state protection.",
-    code: `export function useCachedQuery(key, loader) {
-  const [state, setState] = useState({ status: "idle", data: null });
-
-  useEffect(() => {
-    let active = true;
-    setState({ status: "loading", data: null });
-
-    loader(key).then((data) => {
-      if (active) setState({ status: "ready", data });
-    });
-
-    return () => {
-      active = false;
-    };
-  }, [key, loader]);
-
-  return state;
-}`,
-    usageCount: 42,
-    createdAt: "2026-04-09T16:20:00.000Z",
-    updatedAt: "2026-05-11T17:45:00.000Z",
-  },
-  {
-    id: "artifact-python-ast-map",
-    title: "Python AST dependency mapper",
+    id: "artifact-db-client",
+    title: "db.client.py",
     language: "Python",
-    tags: ["python", "ast", "analysis"],
-    collection: "Architecture Intelligence",
-    summary: "Extracts import relationships from a Python file for architecture graphs.",
-    code: `import ast
-from pathlib import Path
+    tags: ["database", "sqlalchemy", "connection"],
+    collection: "Backend",
+    summary: "Database engine client using SQLAlchemy with connection pooling and health checks.",
+    source: "Code_Arch API",
+    code: `import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-def map_imports(file_path: str) -> list[str]:
-    tree = ast.parse(Path(file_path).read_text())
-    imports = []
+def get_engine():
+    url = os.getenv("DATABASE_URL")
+    return create_engine(url, pool_pre_ping=True)
 
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            imports.extend(alias.name for alias in node.names)
-        if isinstance(node, ast.ImportFrom) and node.module:
-            imports.append(node.module)
-
-    return sorted(set(imports))`,
-    usageCount: 31,
-    createdAt: "2026-03-28T11:05:00.000Z",
-    updatedAt: "2026-05-10T21:18:00.000Z",
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=get_engine(),
+)`,
+    usageCount: 64,
+    favorite: true,
+    createdAt: "2026-04-09T16:20:00.000Z",
+    updatedAt: "2026-05-17T17:45:00.000Z",
   },
   {
-    id: "artifact-sql-migration-guard",
-    title: "Postgres migration guard",
-    language: "SQL",
-    tags: ["postgres", "migration", "safety"],
-    collection: "Database Reliability",
-    summary: "Wraps risky DDL changes in an advisory-lock protected migration block.",
-    code: `BEGIN;
-
-SELECT pg_advisory_xact_lock(918273645);
-
-ALTER TABLE code_artifacts
-  ADD COLUMN IF NOT EXISTS last_indexed_at timestamptz;
-
-CREATE INDEX IF NOT EXISTS idx_code_artifacts_language
-  ON code_artifacts(language);
-
-COMMIT;`,
-    usageCount: 18,
-    createdAt: "2026-02-20T08:30:00.000Z",
-    updatedAt: "2026-05-08T14:52:00.000Z",
-  },
-  {
-    id: "artifact-node-rate-limit",
-    title: "Node API rate-limit middleware",
+    id: "artifact-auth-middleware",
+    title: "auth.middleware.js",
     language: "JavaScript",
-    tags: ["node", "api", "security"],
-    collection: "Backend Controls",
-    summary: "A dependency-free token bucket middleware for small internal APIs.",
-    code: `const buckets = new Map();
+    tags: ["auth", "middleware", "security"],
+    collection: "Backend",
+    summary: "Express middleware for bearer-token authorization with safe 401 and 403 responses.",
+    source: "Node service starter",
+    code: `export function authMiddleware(req, res, next) {
+  const token = req.headers.authorization;
 
-export function rateLimit({ limit = 60, windowMs = 60000 } = {}) {
-  return function middleware(req, res, next) {
-    const key = req.ip ?? "anonymous";
-    const now = Date.now();
-    const bucket = buckets.get(key) ?? { count: 0, resetAt: now + windowMs };
+  if (!token) {
+    return res.status(401).end();
+  }
 
-    if (now > bucket.resetAt) {
-      bucket.count = 0;
-      bucket.resetAt = now + windowMs;
-    }
-
-    bucket.count += 1;
-    buckets.set(key, bucket);
-
-    if (bucket.count > limit) {
-      return res.status(429).json({ error: "Rate limit exceeded" });
-    }
-
-    return next();
-  };
+  try {
+    req.user = verifyToken(token);
+    next();
+  } catch {
+    res.status(403).end();
+  }
 }`,
-    usageCount: 27,
+    usageCount: 48,
+    favorite: true,
+    createdAt: "2026-03-28T11:05:00.000Z",
+    updatedAt: "2026-05-17T15:18:00.000Z",
+  },
+  {
+    id: "artifact-data-pipeline",
+    title: "data.pipeline.py",
+    language: "Python",
+    tags: ["ml", "pipeline", "pandas"],
+    collection: "Data",
+    summary: "Compact feature pipeline that cleans records, builds features, and runs a model.",
+    source: "ML experiments",
+    code: `def run_pipeline(data):
+    clean = clean_data(data)
+    features = build_features(clean)
+    model = load_model()
+    return model.predict(features)`,
+    usageCount: 37,
+    createdAt: "2026-02-20T08:30:00.000Z",
+    updatedAt: "2026-05-17T13:52:00.000Z",
+  },
+  {
+    id: "artifact-user-service",
+    title: "user.service.js",
+    language: "JavaScript",
+    tags: ["service", "user", "api"],
+    collection: "Backend",
+    summary: "User lookup service with explicit not-found handling for API routes.",
+    source: "Account service",
+    code: `export async function getUser(id) {
+  const user = await db.users.findById(id);
+
+  if (!user) {
+    throw new Error("Not found");
+  }
+
+  return user;
+}`,
+    usageCount: 31,
     createdAt: "2026-01-19T19:05:00.000Z",
-    updatedAt: "2026-05-06T10:11:00.000Z",
+    updatedAt: "2026-05-17T12:11:00.000Z",
   },
   {
-    id: "artifact-css-fluid-panel",
-    title: "Fluid glass panel system",
-    language: "CSS",
-    tags: ["css", "dashboard", "design-system"],
-    collection: "Interface Polish",
-    summary: "Reusable glass panel treatment with accessible contrast and restrained depth.",
-    code: `.panel {
-  background:
-    linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)),
-    rgba(8, 13, 22, 0.82);
-  border: 1px solid rgba(174, 214, 255, 0.16);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
-  backdrop-filter: blur(20px);
+    id: "artifact-calculate-utils",
+    title: "calculate.utils.js",
+    language: "JavaScript",
+    tags: ["math", "utilities", "arrays"],
+    collection: "Utilities",
+    summary: "Small utility functions for sum and average operations with readable reducers.",
+    source: "Shared utilities",
+    code: `export function sum(a, b) {
+  return a + b;
+}
+
+export function avg(arr) {
+  return arr.reduce(sum, 0) / arr.length;
 }`,
-    usageCount: 36,
+    usageCount: 22,
     createdAt: "2026-04-15T13:12:00.000Z",
-    updatedAt: "2026-05-09T09:24:00.000Z",
+    updatedAt: "2026-05-17T10:24:00.000Z",
   },
   {
-    id: "artifact-bash-release-check",
-    title: "Release readiness check",
+    id: "artifact-api-routes",
+    title: "api.routes.js",
+    language: "JavaScript",
+    tags: ["express", "routes", "health"],
+    collection: "Backend",
+    summary: "Express route module with a health check endpoint and reusable router export.",
+    source: "API bootstrap",
+    code: `import express from "express";
+const router = express.Router();
+
+router.get("/health", (_, res) => {
+  res.json({ status: "ok" });
+});
+
+export default router;`,
+    usageCount: 18,
+    createdAt: "2026-02-06T18:42:00.000Z",
+    updatedAt: "2026-05-16T22:07:00.000Z",
+  },
+  {
+    id: "artifact-release-check",
+    title: "release.check.sh",
     language: "Shell",
     tags: ["release", "qa", "automation"],
-    collection: "Delivery Automation",
+    collection: "Delivery",
     summary: "Small release gate for lint, tests, build, and artifact sanity checks.",
+    source: "Delivery automation",
     code: `#!/usr/bin/env bash
 set -euo pipefail
 
@@ -143,10 +145,9 @@ npm run build
 npm run test:e2e
 
 test -d dist
-test -f dist/index.html
-echo "release candidate is ready"`,
+test -f dist/index.html`,
     usageCount: 14,
     createdAt: "2026-02-06T18:42:00.000Z",
-    updatedAt: "2026-05-03T22:07:00.000Z",
+    updatedAt: "2026-05-15T22:07:00.000Z",
   },
 ];

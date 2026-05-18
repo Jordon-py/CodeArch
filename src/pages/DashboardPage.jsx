@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import { AppShell } from "../components/AppShell.jsx";
 import { CommandPalette } from "../components/CommandPalette.jsx";
 import { DashboardMetricsPanel } from "../components/DashboardMetricsPanel.jsx";
+import { DeployReadinessPanel } from "../components/DeployReadinessPanel.jsx";
 import { ScriptLibrary } from "../components/ScriptLibrary.jsx";
 import { SelectedScriptInspector } from "../components/SelectedScriptInspector.jsx";
+import { SnippetEditor } from "../components/SnippetEditor.jsx";
 import { ThreeDashboardScene } from "../components/ThreeDashboardScene.jsx";
 import { useCodeArtifacts } from "../hooks/useCodeArtifacts.js";
 
@@ -20,16 +22,45 @@ export function DashboardPage() {
     setQuery,
     language,
     setLanguage,
+    tag,
+    setTag,
+    tags,
+    collection,
+    setCollection,
+    collections,
+    sortBy,
+    setSortBy,
     languages,
     metrics,
-    createStarterArtifact,
+    feedback,
+    createArtifact,
+    updateSelectedArtifact,
     markSelectedAsOpened,
     removeSelectedArtifact,
+    exportArtifacts,
+    importArtifacts,
   } = useCodeArtifacts();
   const [commandOpen, setCommandOpen] = useState(false);
+  const [editorState, setEditorState] = useState({
+    open: false,
+    mode: "create",
+    artifact: null,
+  });
 
   const openCommandPalette = useCallback(() => setCommandOpen(true), []);
   const closeCommandPalette = useCallback(() => setCommandOpen(false), []);
+  const openCreateEditor = useCallback(
+    () => setEditorState({ open: true, mode: "create", artifact: null }),
+    [],
+  );
+  const openEditEditor = useCallback(
+    () => setEditorState({ open: true, mode: "edit", artifact: selectedArtifact }),
+    [selectedArtifact],
+  );
+  const closeEditor = useCallback(
+    () => setEditorState((current) => ({ ...current, open: false })),
+    [],
+  );
 
   useEffect(() => {
     function onKeyDown(event) {
@@ -72,34 +103,46 @@ export function DashboardPage() {
     }
 
     return (
-      <main className="dashboard-grid">
-        <ThreeDashboardScene
-          artifacts={filteredArtifacts.length ? filteredArtifacts : artifacts}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-        />
+      <main className="dashboard-layout">
+        <div className="dashboard-main">
+          <ThreeDashboardScene
+            artifacts={artifacts}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+          />
 
-        <DashboardMetricsPanel
-          metrics={metrics}
-          query={query}
-          setQuery={setQuery}
-          language={language}
-          setLanguage={setLanguage}
-          languages={languages}
-          onQuickOpen={setSelectedId}
-        />
+          <ScriptLibrary
+            artifacts={filteredArtifacts}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+            query={query}
+            setQuery={setQuery}
+            language={language}
+            setLanguage={setLanguage}
+            languages={languages}
+            tag={tag}
+            setTag={setTag}
+            tags={tags}
+            collection={collection}
+            setCollection={setCollection}
+            collections={collections}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+          />
+        </div>
 
-        <ScriptLibrary
-          artifacts={filteredArtifacts}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-        />
+        <aside className="dashboard-side" aria-label="Artifact intelligence and selected script">
+          <DashboardMetricsPanel metrics={metrics} />
 
-        <SelectedScriptInspector
-          artifact={selectedArtifact}
-          onMarkOpened={markSelectedAsOpened}
-          onDelete={removeSelectedArtifact}
-        />
+          <SelectedScriptInspector
+            artifact={selectedArtifact}
+            onMarkOpened={markSelectedAsOpened}
+            onEdit={openEditEditor}
+            onDelete={removeSelectedArtifact}
+          />
+
+          <DeployReadinessPanel />
+        </aside>
       </main>
     );
   }
@@ -107,8 +150,12 @@ export function DashboardPage() {
   return (
     <AppShell
       artifactCount={artifacts.length}
-      onCreateArtifact={createStarterArtifact}
+      collectionCounts={metrics.collectionCounts}
+      feedback={feedback}
+      onCreateArtifact={openCreateEditor}
       onOpenCommandPalette={openCommandPalette}
+      onExportArtifacts={exportArtifacts}
+      onImportArtifacts={importArtifacts}
     >
       {renderMainSurface()}
       <CommandPalette
@@ -116,6 +163,14 @@ export function DashboardPage() {
         artifacts={artifacts}
         onClose={closeCommandPalette}
         onSelect={setSelectedId}
+      />
+      <SnippetEditor
+        key={`${editorState.mode}-${editorState.artifact?.id ?? "new"}-${editorState.open}`}
+        open={editorState.open}
+        mode={editorState.mode}
+        artifact={editorState.artifact}
+        onClose={closeEditor}
+        onSave={editorState.mode === "edit" ? updateSelectedArtifact : createArtifact}
       />
     </AppShell>
   );

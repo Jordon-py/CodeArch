@@ -297,14 +297,15 @@ export function ThreeDashboardScene({ artifacts, selectedId, onSelect }) {
       aria-label="Three dimensional flying saved-code dashboard"
       data-testid="three-dashboard"
     >
-      <div className="three-stage__header">
-        <div>
-          <p className="eyebrow">Spatial Interface</p>
-          <h2>Flying saved-code scripts</h2>
-        </div>
-        <span className="panel-chip">{selectedLabel}</span>
-      </div>
+      <h2 className="sr-only">Flying saved-code scripts</h2>
+      <span className="scene-selected-label">{selectedLabel}</span>
       <div className="three-canvas-shell" ref={mountRef} />
+      <div className="scene-controls" aria-hidden="true">
+        <span>Drag to orbit</span>
+        <span>Scroll to zoom</span>
+        <span>Shift + Drag to pan</span>
+        <span>R Reset view</span>
+      </div>
     </section>
   );
 }

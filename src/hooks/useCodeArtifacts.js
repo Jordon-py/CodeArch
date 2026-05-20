@@ -189,43 +189,8 @@ export function useCodeArtifacts() {
     return response.data;
   }, []);
 
-  const updateSelectedArtifact = useCallback(
-    async (patch) => {
-      if (!selectedArtifact) return null;
-
-      const response = await updateCodeArtifact(selectedArtifact.id, patch);
-
-      if (!response.ok) {
-        setError(response.error.message);
-        setFeedback({ type: "error", message: response.error.message });
-        return null;
-      }
-
-      setArtifacts((current) =>
-        current.map((artifact) =>
-          artifact.id === response.data.id ? response.data : artifact,
-        ),
-      );
-      setSelectedId(response.data.id);
-      setFeedback({ type: "success", message: "Script changes saved." });
-      return response.data;
-    },
-    [selectedArtifact],
-  );
-
-  const markSelectedAsOpened = useCallback(async (patch = null, successMessage = null) => {
-    if (!selectedArtifact) return null;
-
-    const updatePatch =
-      patch && typeof patch === "object"
-        ? patch
-        : {
-            usageCount: selectedArtifact.usageCount + 1,
-          };
-
-    const response = await updateCodeArtifact(selectedArtifact.id, {
-      ...updatePatch,
-    });
+  const updateArtifactById = useCallback(async (id, patch, successMessage = "Script updated.") => {
+    const response = await updateCodeArtifact(id, patch);
 
     if (!response.ok) {
       setError(response.error.message);
@@ -238,11 +203,34 @@ export function useCodeArtifacts() {
         artifact.id === response.data.id ? response.data : artifact,
       ),
     );
+    setSelectedId(response.data.id);
     if (successMessage) {
       setFeedback({ type: "success", message: successMessage });
     }
     return response.data;
-  }, [selectedArtifact]);
+  }, []);
+
+  const updateSelectedArtifact = useCallback(
+    async (patch) => {
+      if (!selectedArtifact) return null;
+      return updateArtifactById(selectedArtifact.id, patch, "Script changes saved.");
+    },
+    [selectedArtifact, updateArtifactById],
+  );
+
+  const markSelectedAsOpened = useCallback(async (patch = null, successMessage = null) => {
+    if (!selectedArtifact) return null;
+
+    const updatePatch =
+      patch && typeof patch === "object"
+        ? patch
+        : {
+            usageCount: selectedArtifact.usageCount + 1,
+            lastOpenedAt: new Date().toISOString(),
+          };
+
+    return updateArtifactById(selectedArtifact.id, updatePatch, successMessage);
+  }, [selectedArtifact, updateArtifactById]);
 
   const removeSelectedArtifact = useCallback(async () => {
     if (!selectedArtifact) return null;
@@ -336,6 +324,7 @@ export function useCodeArtifacts() {
     setFeedback,
     createArtifact,
     createStarterArtifact,
+    updateArtifactById,
     updateSelectedArtifact,
     markSelectedAsOpened,
     removeSelectedArtifact,

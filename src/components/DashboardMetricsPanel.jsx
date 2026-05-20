@@ -1,36 +1,38 @@
-export function DashboardMetricsPanel({ metrics }) {
+export function DashboardMetricsPanel({ metrics, onViewAll }) {
+  const healthProgress = metrics.healthAverage ?? 0;
+  const topLanguages = metrics.mostUsedLanguages.map((item) => item.label).join(", ") || "No languages yet";
   const metricCards = [
     {
       label: "Total Scripts",
       value: metrics.totalScripts,
-      helper: "12% vs last 7 days",
+      helper: `${metrics.collectionCount} organized collections`,
       tone: "positive",
     },
     {
       label: "Languages",
       value: metrics.languageCount,
-      helper: metrics.mostUsedLanguages.map((item) => item.label).join(", "),
+      helper: topLanguages,
     },
     {
-      label: "Dependencies",
-      value: metrics.dependencyCount,
-      helper: "8% vs last 7 days",
+      label: "Related Links",
+      value: metrics.relatedLinkCount,
+      helper: "Reusable snippet connections",
       tone: "positive",
     },
     {
-      label: "Avg. Complexity",
-      value: metrics.avgComplexity,
-      helper: "/ 10",
+      label: "Avg. Lines",
+      value: metrics.avgLines,
+      helper: "Capture size signal",
     },
     {
-      label: "Test Coverage",
-      value: `${metrics.testCoverage}%`,
-      helper: "MVP readiness",
-      progress: Number(metrics.testCoverage),
+      label: "Archive Health",
+      value: `${healthProgress}%`,
+      helper: `${metrics.needsContextCount} need more context`,
+      progress: healthProgress,
     },
     {
-      label: "Executions (7d)",
-      value: metrics.executions7d.toLocaleString(),
+      label: "Copied Scripts",
+      value: metrics.copiedCount,
       helper: "Reuse activity",
       spark: true,
     },
@@ -42,7 +44,7 @@ export function DashboardMetricsPanel({ metrics }) {
         <div>
           <h2 id="metrics-title">Artifact Intelligence</h2>
         </div>
-        <button className="panel-link" type="button">
+        <button className="panel-link" type="button" onClick={onViewAll}>
           View all
         </button>
       </div>

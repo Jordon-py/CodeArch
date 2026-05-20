@@ -1,3 +1,5 @@
+import { boilerplateCodeSnippets } from "./boilerplateSnippets.js";
+
 export const seedCodeArtifacts = [
   {
     id: "artifact-db-client",
@@ -150,4 +152,5 @@ test -f dist/index.html`,
     createdAt: "2026-02-06T18:42:00.000Z",
     updatedAt: "2026-05-15T22:07:00.000Z",
   },
+  ...boilerplateCodeSnippets,
 ];

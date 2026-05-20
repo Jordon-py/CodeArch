@@ -1,99 +1,119 @@
+import { useEffect, useState } from "react";
+
 export function AppShell({
   children,
+  activeView = "workspace",
+  metrics,
+  pageTitle = "CodeArch Workbench",
   onCreateArtifact,
+  onNavigate,
   onOpenCommandPalette,
   onExportArtifacts,
   onImportArtifacts,
-  artifactCount,
-  collectionCounts = [],
+  onShowNotifications,
+  onCreateFromClipboard,
   feedback,
 }) {
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") return "dark";
+    return window.localStorage.getItem("codearch.theme") || "dark";
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem("codearch.theme", theme);
+  }, [theme]);
+
   function handleImport(event) {
     onImportArtifacts(event.target.files?.[0]);
     event.target.value = "";
   }
 
+  async function handlePasteCapture() {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text.trim()) {
+        onCreateFromClipboard(text);
+        return;
+      }
+      onShowNotifications("Clipboard is empty. Use the workbench to write code manually.");
+    } catch {
+      onShowNotifications("Clipboard access was blocked. Use the workbench to paste code manually.");
+    }
+  }
+
+  function handleNavigate(event, view) {
+    event.preventDefault();
+    onNavigate?.(view);
+  }
+
+  const navigationItems = [
+    { id: "workspace", href: "/dashboard", icon: "terminal", label: "Workbench" },
+    { id: "library", href: "/library", icon: "file", label: "Library" },
+  ];
+
   return (
-    <div className="app-shell">
-      <aside className="sidebar" aria-label="Workspace navigation">
-        <a className="brand-lockup" href="#dashboard" aria-label="CodeArch dashboard">
+    <div className="app-shell" data-testid="app-shell">
+      <aside className="sidebar" aria-label="Workspace navigation" data-testid="app-sidebar">
+        <a
+          className="brand-lockup"
+          href="/dashboard"
+          aria-label="CodeArch dashboard"
+          onClick={(event) => handleNavigate(event, "workspace")}
+        >
           <span className="brand-mark" aria-hidden="true">
-            <Icon name="cube" />
+            <span className="brand-glyph">CA</span>
           </span>
           <span>
             <strong>CodeArch</strong>
+            <small>Local archive</small>
           </span>
         </a>
 
         <nav className="side-nav" aria-label="Primary">
-          <a href="#dashboard" className="side-nav__link side-nav__link--active">
-            <Icon name="cube" />
-            Command Center
-          </a>
-          <a href="#library" className="side-nav__link">
-            <Icon name="file" />
-            Artifacts
-          </a>
-          <a href="#intelligence" className="side-nav__link">
-            <Icon name="graph" />
-            Graph Map
-          </a>
-          <a href="#library" className="side-nav__link">
-            <Icon name="nodes" />
-            Dependencies
-          </a>
-          <a href="#intelligence" className="side-nav__link">
-            <Icon name="chart" />
-            Intelligence
-          </a>
-          <a href="#inspector" className="side-nav__link">
-            <Icon name="terminal" />
-            Executions
-          </a>
-          <a href="#inspector" className="side-nav__link">
-            <Icon name="settings" />
-            Settings
-          </a>
-        </nav>
-
-        <div className="sidebar-section">
-          <p className="sidebar-section__title">Collections</p>
-          <a className="collection-link" href="#library">
-            <span>
-              <Icon name="file" />
-              All Scripts
-            </span>
-            <strong>{artifactCount}</strong>
-          </a>
-          {collectionCounts.slice(0, 5).map((item) => (
-            <a className="collection-link" href="#library" key={item.label}>
-              <span>
-                <Icon name="folder" />
-                {item.label}
-              </span>
-              <strong>{item.count}</strong>
+          {navigationItems.map((item) => (
+            <a
+              href={item.href}
+              className={`side-nav__link ${
+                activeView === item.id ? "side-nav__link--active" : ""
+              }`}
+              aria-current={activeView === item.id ? "page" : undefined}
+              key={item.id}
+              onClick={(event) => handleNavigate(event, item.id)}
+            >
+              <Icon name={item.icon} />
+              {item.label}
             </a>
           ))}
-        </div>
+        </nav>
 
-        <div className="sidebar-status" aria-label="Workspace plan">
-          <span className="avatar" aria-hidden="true">
-            DA
-          </span>
-          <span>
-            <strong>Dev Architect</strong>
-            <small>Pro Plan</small>
-          </span>
+        <div className="sidebar-section" aria-label="Archive summary">
+          <p className="sidebar-section__title">Archive</p>
+          <div className="sidebar-stat">
+            <span>Scripts</span>
+            <strong>{metrics?.totalScripts ?? 0}</strong>
+          </div>
+          <div className="sidebar-stat">
+            <span>Health</span>
+            <strong>{metrics?.healthAverage ?? 0}%</strong>
+          </div>
+          <div className="sidebar-stat">
+            <span>Collections</span>
+            <strong>{metrics?.collectionCount ?? 0}</strong>
+          </div>
         </div>
       </aside>
 
       <div className="workspace">
-        <header className="topbar">
+        <header className="topbar" data-testid="top-command-bar">
           <div className="page-title">
             <span className="title-icon" aria-hidden="true">
               <Icon name="cube" />
             </span>
-            <h1>Command Center</h1>
+            <span>
+              <h1>{pageTitle}</h1>
+              <small>Private, local-first code memory</small>
+            </span>
           </div>
 
           <button
@@ -109,8 +129,16 @@ export function AppShell({
 
           <div className="topbar-actions">
             <button className="button button--primary" type="button" onClick={onCreateArtifact}>
-              <Icon name="plus" />
-              New Script
+              <Icon name="terminal" />
+              New Draft
+            </button>
+            <button
+              className="button button--secondary"
+              type="button"
+              onClick={handlePasteCapture}
+            >
+              <Icon name="clipboard" />
+              Paste Save
             </button>
             <label className="icon-button" aria-label="Import archive">
               <input
@@ -124,12 +152,15 @@ export function AppShell({
             <button className="icon-button" type="button" onClick={onExportArtifacts} aria-label="Export archive">
               <Icon name="download" />
             </button>
-            <button className="icon-button" type="button" aria-label="Notifications">
-              <Icon name="bell" />
+            <button
+              className="icon-button theme-toggle"
+              type="button"
+              onClick={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              aria-pressed={theme === "dark"}
+            >
+              <Icon name={theme === "dark" ? "sun" : "moon"} />
             </button>
-            <span className="topbar-avatar" aria-hidden="true">
-              DA
-            </span>
           </div>
         </header>
 
@@ -155,6 +186,14 @@ function Icon({ name }) {
         <path d="M4 19V5" />
         <path d="M4 19h16" />
         <path d="M8 15l3-4 3 2 4-7" />
+      </>
+    ),
+    clipboard: (
+      <>
+        <path d="M9 4h6l1 2h3v15H5V6h3l1-2Z" />
+        <path d="M9 4v4h6V4" />
+        <path d="M8 12h8" />
+        <path d="M8 16h6" />
       </>
     ),
     cube: (
@@ -211,6 +250,15 @@ function Icon({ name }) {
       <>
         <path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
         <path d="M4 12h2M18 12h2M12 4v2M12 18v2M6.4 6.4l1.4 1.4M16.2 16.2l1.4 1.4M17.6 6.4l-1.4 1.4M7.8 16.2l-1.4 1.4" />
+      </>
+    ),
+    moon: (
+      <path d="M19 14.6A7 7 0 0 1 9.4 5a7.4 7.4 0 1 0 9.6 9.6Z" />
+    ),
+    sun: (
+      <>
+        <path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
+        <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19" />
       </>
     ),
     terminal: (

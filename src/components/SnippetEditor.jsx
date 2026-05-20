@@ -1,9 +1,10 @@
-import { useId, useState } from "react";
+import { useId, useMemo, useState } from "react";
+import { analyzeCodeDraft } from "../services/codeArtifactRepository.js";
 
 const emptyDraft = {
   title: "",
-  language: "JavaScript",
-  collection: "Backend",
+  language: "",
+  collection: "Inbox",
   tags: "",
   summary: "",
   code: "",
@@ -17,28 +18,84 @@ function toDraft(artifact) {
     title: artifact.title,
     language: artifact.language,
     collection: artifact.collection,
-    tags: artifact.tags.join(", "),
+    tags: (artifact.tags ?? []).join(", "),
     summary: artifact.summary,
     code: artifact.code,
     source: artifact.source ?? "",
   };
 }
 
-export function SnippetEditor({ open, mode, artifact, onClose, onSave }) {
+export function SnippetEditor({ open, mode, artifact, artifacts = [], onClose, onSave }) {
   const titleId = useId();
   const codeId = useId();
   const [draft, setDraft] = useState(() => toDraft(artifact));
   const [localError, setLocalError] = useState("");
+  const analysis = useMemo(
+    () =>
+      analyzeCodeDraft({
+        code: draft.code,
+        title: draft.title,
+        language: draft.language,
+        collection: draft.collection,
+        artifacts: artifacts.filter((item) => item.id !== artifact?.id),
+      }),
+    [artifact?.id, artifacts, draft.code, draft.collection, draft.language, draft.title],
+  );
+  const missingSignals = [
+    !draft.source.trim() ? "source" : null,
+    !draft.summary.trim() ? "description" : null,
+    !draft.tags.trim() ? "tags" : null,
+    !draft.collection.trim() || draft.collection === "Inbox" ? "collection" : null,
+  ].filter(Boolean);
 
   function updateDraft(field, value) {
-    setDraft((current) => ({ ...current, [field]: value }));
+    setLocalError("");
+    setDraft((current) => {
+      const next = { ...current, [field]: value };
+
+      if (field !== "code" || mode !== "create" || !value.trim()) {
+        return next;
+      }
+
+      const codeAnalysis = analyzeCodeDraft({
+        code: value,
+        title: current.title,
+        language: current.language,
+        collection: current.collection,
+        artifacts,
+      });
+
+      return {
+        ...next,
+        title: current.title || codeAnalysis.suggestedTitle,
+        language: current.language || codeAnalysis.detectedLanguage,
+        tags: current.tags || codeAnalysis.suggestedTags.join(", "),
+        collection: current.collection || "Inbox",
+        summary:
+          current.summary ||
+          `Reusable ${codeAnalysis.detectedLanguage} snippet with ${codeAnalysis.lineCount} lines.`,
+      };
+    });
+  }
+
+  function applySuggestions() {
+    setDraft((current) => ({
+      ...current,
+      title: analysis.suggestedTitle,
+      language: analysis.detectedLanguage,
+      tags: analysis.suggestedTags.join(", "),
+      collection: current.collection || "Inbox",
+      summary:
+        current.summary ||
+        `Reusable ${analysis.detectedLanguage} snippet with ${analysis.lineCount} lines.`,
+    }));
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if (!draft.title.trim() || !draft.code.trim()) {
-      setLocalError("Title and code are required.");
+    if (!draft.code.trim()) {
+      setLocalError("Paste code before saving.");
       return;
     }
 
@@ -70,7 +127,7 @@ export function SnippetEditor({ open, mode, artifact, onClose, onSave }) {
           <div className="panel-heading">
             <div>
               <p className="eyebrow">{mode === "edit" ? "Edit Script" : "New Script"}</p>
-              <h2 id={titleId}>{mode === "edit" ? "Refine saved code" : "Archive reusable code"}</h2>
+              <h2 id={titleId}>{mode === "edit" ? "Refine saved code" : "Paste code, then save"}</h2>
             </div>
             <button className="icon-button" type="button" onClick={onClose} aria-label="Close editor">
               x
@@ -79,6 +136,49 @@ export function SnippetEditor({ open, mode, artifact, onClose, onSave }) {
 
           {localError ? <p className="form-error">{localError}</p> : null}
 
+          <label className="field field--code-first">
+            <span>Code</span>
+            <textarea
+              id={codeId}
+              className="code-input"
+              value={draft.code}
+              onChange={(event) => updateDraft("code", event.target.value)}
+              placeholder="Paste a reusable code block. CodeArch will infer title, language, tags, and archive signals."
+              spellCheck="false"
+              required
+              autoFocus
+            />
+          </label>
+
+          {draft.code.trim() ? (
+            <div className="draft-intelligence" aria-label="Code draft intelligence">
+              <div>
+                <span>Detected</span>
+                <strong>{analysis.detectedLanguage}</strong>
+              </div>
+              <div>
+                <span>Suggested title</span>
+                <strong>{analysis.suggestedTitle}</strong>
+              </div>
+              <div>
+                <span>Lines</span>
+                <strong>{analysis.lineCount}</strong>
+              </div>
+              <div>
+                <span>Review</span>
+                <strong>{missingSignals.length ? missingSignals.join(", ") : "Ready"}</strong>
+              </div>
+              {analysis.duplicate ? (
+                <p className="duplicate-warning">
+                  Possible duplicate: {analysis.duplicate.title}
+                </p>
+              ) : null}
+              <button className="button button--secondary" type="button" onClick={applySuggestions}>
+                Accept suggestions
+              </button>
+            </div>
+          ) : null}
+
           <div className="editor-grid">
             <label className="field">
               <span>Title</span>
@@ -86,7 +186,6 @@ export function SnippetEditor({ open, mode, artifact, onClose, onSave }) {
                 value={draft.title}
                 onChange={(event) => updateDraft("title", event.target.value)}
                 placeholder="db.client.py"
-                required
               />
             </label>
             <label className="field">
@@ -131,19 +230,6 @@ export function SnippetEditor({ open, mode, artifact, onClose, onSave }) {
               value={draft.source}
               onChange={(event) => updateDraft("source", event.target.value)}
               placeholder="Code_Arch backend"
-            />
-          </label>
-
-          <label className="field">
-            <span>Code</span>
-            <textarea
-              id={codeId}
-              className="code-input"
-              value={draft.code}
-              onChange={(event) => updateDraft("code", event.target.value)}
-              placeholder="Paste the reusable code here."
-              spellCheck="false"
-              required
             />
           </label>
 

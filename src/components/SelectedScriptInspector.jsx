@@ -11,17 +11,30 @@ function formatDate(value) {
 
 export function SelectedScriptInspector({
   artifact,
+  collections = [],
+  relatedArtifacts = [],
   onMarkOpened,
+  onUpdateArtifact,
+  onSelectArtifact,
   onEdit,
   onDelete,
+  onUseInWorkbench,
 }) {
   const [copyState, setCopyState] = useState("idle");
+  const [expandedArtifactId, setExpandedArtifactId] = useState(null);
 
   async function copyCode() {
     if (!artifact) return;
 
     try {
       await navigator.clipboard.writeText(artifact.code);
+      await onMarkOpened(
+        {
+          usageCount: artifact.usageCount + 1,
+          lastCopiedAt: new Date().toISOString(),
+        },
+        "Code copied.",
+      );
       setCopyState("copied");
       window.setTimeout(() => setCopyState("idle"), 1600);
     } catch {
@@ -49,6 +62,9 @@ export function SelectedScriptInspector({
 
   const isFavorite = Boolean(artifact.favorite);
   const isPinned = Boolean(artifact.pinned);
+  const health = artifact.health ?? { score: 0, label: "Needs context", missing: [] };
+  const detailRegionId = `selected-script-details-${artifact.id}`;
+  const detailsOpen = expandedArtifactId === artifact.id;
 
   return (
     <section
@@ -65,8 +81,14 @@ export function SelectedScriptInspector({
           <button className="icon-button" type="button" onClick={onEdit} aria-label="Edit selected script">
             Edit
           </button>
-          <button className="icon-button" type="button" aria-label="More actions">
-            ...
+          <button
+            className="icon-button"
+            type="button"
+            aria-label="Show related scripts"
+            disabled={!relatedArtifacts.length}
+            onClick={() => relatedArtifacts[0] && onSelectArtifact(relatedArtifacts[0].id)}
+          >
+            Related
           </button>
         </div>
       </div>
@@ -118,14 +140,10 @@ export function SelectedScriptInspector({
         </button>
       </div>
 
-      <div className="inspector-meta">
+      <div className="inspector-compact-summary">
         <span>
-          <strong>{formatDate(artifact.updatedAt)}</strong>
-          Updated
-        </span>
-        <span>
-          <strong>{(artifact.code.length / 1024).toFixed(1)} KB</strong>
-          Size
+          <strong>{health.label}</strong>
+          Archive health
         </span>
         <span>
           <strong>{artifact.code.split("\n").length}</strong>
@@ -138,24 +156,132 @@ export function SelectedScriptInspector({
         <p className="inspector-summary">{artifact.summary}</p>
       </div>
 
-      <div className="description-block">
-        <h3>Tags</h3>
-      </div>
-      <div className="tag-cloud">
-        {artifact.tags.map((tag) => (
-          <span className="tag" key={tag}>
-            {tag}
-          </span>
-        ))}
-      </div>
+      <button
+        className="button button--secondary inspector-detail-toggle"
+        type="button"
+        aria-expanded={detailsOpen}
+        aria-controls={detailRegionId}
+        onClick={() => setExpandedArtifactId((current) => (current === artifact.id ? null : artifact.id))}
+      >
+        {detailsOpen ? "Show fewer details" : "Show more details"}
+      </button>
 
-      <pre className="code-preview" tabIndex="0">
-        <code>{artifact.code}</code>
-      </pre>
+      {detailsOpen ? (
+        <div className="inspector-detail-drawer" id={detailRegionId}>
+          <div className="inspector-meta">
+            <span>
+              <strong>{formatDate(artifact.updatedAt)}</strong>
+              Updated
+            </span>
+            <span>
+              <strong>{(artifact.code.length / 1024).toFixed(1)} KB</strong>
+              Size
+            </span>
+            <span>
+              <strong>{artifact.collection}</strong>
+              Collection
+            </span>
+          </div>
+
+          <div className="archive-health">
+            <div>
+              <span>Archive health</span>
+              <strong>{health.label} / {health.score}%</strong>
+            </div>
+            <span className="metric-progress" style={{ "--progress": `${health.score}%` }} />
+            {health.missing?.length ? (
+              <small>Add {health.missing.join(", ")} to make this snippet easier to reuse.</small>
+            ) : (
+              <small>This script has enough context for fast retrieval.</small>
+            )}
+          </div>
+
+          <label className="field inspector-collection-control">
+            <span>Collection</span>
+            <select
+              value={artifact.collection}
+              onChange={(event) =>
+                onUpdateArtifact(
+                  artifact.id,
+                  { collection: event.target.value },
+                  `Moved to ${event.target.value}.`,
+                )
+              }
+              aria-label="Move selected script to collection"
+            >
+              {[...new Set(["Inbox", artifact.collection, ...collections])].map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {artifact.source ? (
+            <div className="description-block">
+              <h3>Source</h3>
+              <p className="inspector-summary">{artifact.source}</p>
+            </div>
+          ) : null}
+
+          <div className="description-block">
+            <h3>Tags</h3>
+          </div>
+          <div className="tag-cloud">
+            {artifact.tags.length ? (
+              artifact.tags.map((tag) => (
+                <span className="tag" key={tag}>
+                  {tag}
+                </span>
+              ))
+            ) : (
+              <span className="tag">untagged</span>
+            )}
+          </div>
+
+          {relatedArtifacts.length ? (
+            <div className="related-stack">
+              <div className="description-block">
+                <h3>Related Scripts</h3>
+              </div>
+              {relatedArtifacts.map((related) => (
+                <button
+                  className="related-script"
+                  type="button"
+                  key={related.id}
+                  onClick={() => onSelectArtifact(related.id)}
+                >
+                  <span>
+                    <strong>{related.title}</strong>
+                    <small>{related.collection} / {related.language}</small>
+                  </span>
+                  <span>Open</span>
+                </button>
+              ))}
+            </div>
+          ) : null}
+
+          {artifact.versionHistory?.length ? (
+            <details className="version-history">
+              <summary>Version history ({artifact.versionHistory.length})</summary>
+              {artifact.versionHistory.slice(0, 3).map((version) => (
+                <article key={`${version.savedAt}-${version.title}`}>
+                  <strong>{version.title || "Untitled revision"}</strong>
+                  <small>{formatDate(version.savedAt)}</small>
+                </article>
+              ))}
+            </details>
+          ) : null}
+
+          <pre className="code-preview" tabIndex="0">
+            <code>{artifact.code}</code>
+          </pre>
+        </div>
+      ) : null}
 
       <div className="inspector-actions">
-        <button className="button button--primary" type="button" onClick={onMarkOpened}>
-          Open
+        <button className="button button--primary" type="button" onClick={() => onUseInWorkbench?.(artifact)}>
+          Use in workbench
         </button>
         <button className="button button--secondary" type="button" onClick={copyCode}>
           {copyState === "copied"
